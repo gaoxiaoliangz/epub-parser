@@ -4,7 +4,13 @@
   "description": "A simple epub parser",
   "main": "dist/parser.min.js",
   "scripts": {
-    "test": "npm run test"
+    "test": "npm run test",
+    "build": "npm run build:lib && npm run build:es && npm run build:umd && npm run build:umd:min",
+    "build:lib": "tsc --outDir lib",
+    "build:es": "cross-env BABEL_ENV=es babel src --out-dir es",
+    "build:umd": "cross-env NODE_ENV=development webpack src/index.js dist/simple-epub-parser.js",
+    "build:umd:min": "cross-env NODE_ENV=production webpack src/index.ts dist/simple-epub-parser.min.js",
+    "clean": "rimraf dist lib"
   },
   "repository": {
     "type": "git",
@@ -26,13 +32,34 @@
   },
   "homepage": "https://github.com/gaoxiaoliangz/simple-epub-parser#readme",
   "dependencies": {
-    "@types/lodash": "^4.14.43",
-    "@types/node": "0.0.2",
-    "@types/xml2js": "0.0.32",
     "lodash": "^4.17.2",
     "node-zip": "^1.1.1",
     "to-markdown": "^3.0.3",
     "typescript": "^2.1.4",
     "xml2js": "^0.4.17"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.43",
+    "@types/node": "0.0.2",
+    "@types/xml2js": "0.0.32",
+    "awesome-typescript-loader": "^3.0.0-beta.9",
+    "babel-core": "^6.18.2",
+    "babel-loader": "^6.2.9",
+    "babel-plugin-istanbul": "^2.0.3",
+    "babel-plugin-lodash": "^3.1.2",
+    "babel-plugin-syntax-async-functions": "^6.5.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.18.0",
+    "babel-plugin-transform-regenerator": "^6.6.5",
+    "babel-preset-es2015-no-commonjs": "0.0.2",
+    "babel-preset-react": "^6.1.18",
+    "babel-preset-stage-2": "^6.18.0",
+    "babel-register": "^6.18.0",
+    "cross-env": "^3.1.3",
+    "expect": "^1.14.0",
+    "lodash-webpack-plugin": "^0.10.3",
+    "mocha": "^3.0.2",
+    "rifraf": "^2.0.3",
+    "rimraf": "^2.5.1",
+    "webpack": "^1.14.0"
   }
 }
