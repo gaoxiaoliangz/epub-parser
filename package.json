@@ -6,12 +6,14 @@
   "scripts": {
     "test": "npm run test",
     "build": "npm run build:lib && npm run build:es && npm run build:umd && npm run build:umd:min",
-    "prebuild:lib": "tsc --outDir es6",
+    "build:es6": "tsc --outDir es6",
+    "prebuild:lib": "npm run build:es6",
     "build:lib": "babel es6 --out-dir lib",
-    "build:es": "cross-env BABEL_ENV=es babel src --out-dir es",
-    "build:umd": "cross-env NODE_ENV=development webpack src/index.js dist/simple-epub-parser.js",
+    "prebuild:es": "npm run build:es6",
+    "build:es": "cross-env BABEL_ENV=es babel es6 --out-dir es",
+    "build:umd": "cross-env NODE_ENV=development webpack src/index.ts dist/simple-epub-parser.js",
     "build:umd:min": "cross-env NODE_ENV=production webpack src/index.ts dist/simple-epub-parser.min.js",
-    "clean": "rimraf dist lib"
+    "clean": "rimraf dist lib es6"
   },
   "repository": {
     "type": "git",
