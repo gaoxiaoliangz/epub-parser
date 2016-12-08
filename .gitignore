@@ -3,3 +3,7 @@ bower_components/
 .sass-cache/
 .DS_Store
 npm-debug.log
+dist/
+lib/
+es/
+es6/

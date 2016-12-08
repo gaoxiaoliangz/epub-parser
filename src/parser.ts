@@ -55,13 +55,19 @@ const resolveContent = zipPath => zipInstance => {
 }
 
 const getContentFromSpine = (spine, root) => zipInstance => {
-  return _(spine)
-    .union()
-    .map(href => ({
-      id: parseHref(href).name,
-      markdown: resolveContent(`${root}${href}`)(zipInstance)
-    }))
-    .value()
+  // return _(spine)
+  //   .union()
+  //   .map(href => ({
+  //     id: parseHref(href).name,
+  //     markdown: resolveContent(`${root}${href}`)(zipInstance)
+  //   }))
+  //   .value()
+
+  // no chain
+  return _.map(_.union(spine), href => ({
+    id: parseHref(href).name,
+    markdown: resolveContent(`${root}${href}`)(zipInstance)
+  }))
 }
 
 const extractZipContent = filepath => zip => {
