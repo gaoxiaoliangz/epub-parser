@@ -1,0 +1,38 @@
+{
+  "name": "simple-epub-parser",
+  "version": "0.1.0",
+  "description": "A simple epub parser",
+  "main": "dist/parser.min.js",
+  "scripts": {
+    "test": "npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gaoxiaoliangz/simple-epub-parser.git"
+  },
+  "keywords": [
+    "epub-parser",
+    "parser",
+    "epub",
+    "simple",
+    "easy",
+    "book",
+    "file"
+  ],
+  "author": "gaoxiaoliangz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gaoxiaoliangz/simple-epub-parser/issues"
+  },
+  "homepage": "https://github.com/gaoxiaoliangz/simple-epub-parser#readme",
+  "dependencies": {
+    "@types/lodash": "^4.14.43",
+    "@types/node": "0.0.2",
+    "@types/xml2js": "0.0.32",
+    "lodash": "^4.17.2",
+    "node-zip": "^1.1.1",
+    "to-markdown": "^3.0.3",
+    "typescript": "^2.1.4",
+    "xml2js": "^0.4.17"
+  }
+}
