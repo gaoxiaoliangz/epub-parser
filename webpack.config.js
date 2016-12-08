@@ -1,6 +1,7 @@
 'use strict'
 var webpack = require('webpack')
 var LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
+var nodeExternals = require('webpack-node-externals')
 
 var env = process.env.NODE_ENV
 
@@ -50,7 +51,17 @@ var config = {
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(env)
     })
-  ]
+  ],
+  resolve: {
+    extensions: ['', '.js', '.jsx', '.ts', '.tsx'],
+  },
+  target: 'node',
+  node: {
+    __filename: true,
+    __dirname: true,
+    console: false
+  },
+  externals: [nodeExternals()]
 }
 
 if (env === 'production') {

@@ -64,6 +64,7 @@
     "mocha": "^3.0.2",
     "rifraf": "^2.0.3",
     "rimraf": "^2.5.1",
-    "webpack": "^1.14.0"
+    "webpack": "^1.14.0",
+    "webpack-node-externals": "^1.5.4"
   }
 }
