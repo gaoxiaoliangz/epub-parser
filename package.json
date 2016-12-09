@@ -3,17 +3,18 @@
   "version": "0.1.0",
   "description": "A simple epub parser",
   "main": "lib/index.js",
+  "types": "./types/index.d.ts",
   "scripts": {
     "test": "npm run test",
     "build": "npm run build:lib && npm run build:es && npm run build:umd && npm run build:umd:min",
-    "build:es6": "tsc --outDir es6",
-    "prebuild:lib": "npm run build:es6",
-    "build:lib": "babel es6 --out-dir lib",
-    "prebuild:es": "npm run build:es6",
-    "build:es": "cross-env BABEL_ENV=es babel es6 --out-dir es",
+    "build:js": "tsc --outDir js --declaration --declarationDir types",
+    "prebuild:lib": "npm run build:js",
+    "build:lib": "babel js --out-dir lib",
+    "prebuild:es": "npm run build:js",
+    "build:es": "cross-env BABEL_ENV=es babel js --out-dir es",
     "build:umd": "cross-env NODE_ENV=development webpack src/index.ts dist/simple-epub-parser.js",
     "build:umd:min": "cross-env NODE_ENV=production webpack src/index.ts dist/simple-epub-parser.min.js",
-    "clean": "rimraf dist lib es6 es"
+    "clean": "rimraf dist lib js es types"
   },
   "repository": {
     "type": "git",
