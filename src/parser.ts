@@ -162,6 +162,7 @@ export async function binaryParser(binaryFile) {
 }
 
 export default function parser(pathOrBinary, useBinary: boolean = false) {
+  console.log('parsing ...')
   if (useBinary) {
     return binaryParser(pathOrBinary)
   }
