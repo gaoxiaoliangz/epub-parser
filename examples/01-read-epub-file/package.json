@@ -13,5 +13,8 @@
     "@types/express": "^4.0.34",
     "express": "^4.14.0",
     "simple-epub-parser": "github:gaoxiaoliangz/simple-epub-parser"
+  },
+  "devDependencies": {
+    "babel-polyfill": "^6.20.0"
   }
 }

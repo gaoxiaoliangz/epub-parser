@@ -1,9 +1,13 @@
+require('babel-polyfill')
 const express = require('express')
 const http = require('http')
 const app = express()
+const epubParser = require('simple-epub-parser').default
 
 app.use('/', (req, res) => {
-  res.send('server runing')
+  epubParser('./epubs/file-1.epub').then(result => {
+    res.send(result)
+  })
 })
 
 app.set('port', 3000)
