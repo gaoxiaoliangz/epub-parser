@@ -5,7 +5,10 @@
   "main": "lib/index.js",
   "types": "./types/index.d.ts",
   "scripts": {
-    "test": "npm run test",
+    "test": "npm run mocha --silent",
+    "test:ts": "mocha --compilers ts:ts-node/register,tsx:ts-node/register",
+    "test:ts2": "mocha --require ts-node/register test/**/*.spec.ts",
+    "mocha": "mocha --require babel-register",
     "build": "npm run build:lib && npm run build:es && npm run build:umd && npm run build:umd:min",
     "build:js": "tsc --outDir js --declaration --declarationDir types",
     "prebuild:lib": "npm run build:js",
@@ -43,7 +46,9 @@
     "xml2js": "^0.4.17"
   },
   "devDependencies": {
+    "@types/expect.js": "^0.3.28",
     "@types/lodash": "^4.14.43",
+    "@types/mocha": "^2.2.33",
     "@types/node": "0.0.2",
     "@types/xml2js": "0.0.32",
     "awesome-typescript-loader": "^3.0.0-beta.9",
@@ -62,10 +67,12 @@
     "babel-register": "^6.18.0",
     "cross-env": "^3.1.3",
     "expect": "^1.14.0",
+    "expect.js": "^0.3.1",
     "lodash-webpack-plugin": "^0.10.3",
     "mocha": "^3.0.2",
     "rifraf": "^2.0.3",
     "rimraf": "^2.5.1",
+    "ts-node": "^1.7.0",
     "webpack": "^1.14.0",
     "webpack-node-externals": "^1.5.4"
   }
