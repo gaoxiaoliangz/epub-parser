@@ -5,10 +5,8 @@
   "main": "lib/index.js",
   "types": "./types/index.d.ts",
   "scripts": {
-    "test": "npm run mocha --silent",
-    "test:ts": "mocha --compilers ts:ts-node/register,tsx:ts-node/register",
-    "test:ts2": "mocha --require ts-node/register test/**/*.spec.ts",
-    "mocha": "mocha --require babel-register",
+    "test": "mocha --require babel-register",
+    "test:watch": "npm test -- --watch",
     "build": "npm run build:lib && npm run build:es && npm run build:umd && npm run build:umd:min",
     "build:js": "tsc --outDir js --declaration --declarationDir types",
     "prebuild:lib": "npm run build:js",
