@@ -3,8 +3,8 @@ import xml2js from 'xml2js'
 import _ from 'lodash'
 import parseHref from './href'
 import * as mdConverters from './md-converters'
-const nodeZip = require('node-zip')
-const toMarkdown = require('to-markdown')
+import nodeZip from 'node-zip'
+import toMarkdown from 'to-markdown'
 
 const xmlParser = new xml2js.Parser()
 
