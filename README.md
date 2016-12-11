@@ -29,7 +29,7 @@ parser can process file referenced by path string or binary data, it treat the f
 
 #### pathOrBinary
 
-type: `boolean`
+type: `string`
 
 The path to the file or file's binary data
 
