@@ -1,6 +1,6 @@
 {
   "name": "simple-epub-parser",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A simple epub parser",
   "main": "lib/index.js",
   "types": "./types/index.d.ts",
@@ -16,7 +16,10 @@
     "build:umd": "cross-env NODE_ENV=development webpack src/index.ts dist/simple-epub-parser.js",
     "build:umd:min": "cross-env NODE_ENV=production webpack src/index.ts dist/simple-epub-parser.min.js",
     "clean": "rimraf dist lib js es types",
-    "watch:lib": "npm run build:js -- --watch & npm run build:lib -- --watch"
+    "watch:lib": "npm run build:js -- --watch & npm run build:lib -- --watch",
+    "preupdate-package": "npm config set registry https://registry.npmjs.org/",
+    "update-package": "npm publish",
+    "postupdate-package": "npm config set registry https://registry.npm.taobao.org"
   },
   "repository": {
     "type": "git",
