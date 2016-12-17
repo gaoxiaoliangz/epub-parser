@@ -5,17 +5,19 @@ import path from 'path'
 
 const baseDir = process.cwd()
 const filesToBeTested = ['file-1', 'file-2']
+// const filesToBeTested = ['file-1']
 
 const testFile = filename => {
   describe(`parser 测试 ${filename}.epub`, () => {
-    const fileContent = parser(path.join(baseDir, `epubs/${filename}.epub`))
+    const fileContent = parser(path.join(baseDir, `epubs/${filename}.epub`), { type: 'path' })
 
     it('内容对象包含三个 key', done => {
-      fileContent.then(result => {
-        const keys = _.keys(result)
-        expect(keys.length).to.equal(3)
-        done()
-      })
+      fileContent
+        .then(result => {
+          const keys = _.keys(result)
+          expect(keys.length).to.equal(3)
+          done()
+        })
     })
 
     it('key 分别为: flesh, nav, meta', done => {

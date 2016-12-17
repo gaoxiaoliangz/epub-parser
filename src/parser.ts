@@ -161,10 +161,47 @@ export async function binaryParser(binaryFile) {
   }
 }
 
-export default function parser(pathOrBinary, useBinary: boolean = false) {
-  if (useBinary) {
-    return binaryParser(pathOrBinary)
+// export default function parser(pathOrBinary, useBinary: boolean = false) {
+//   if (useBinary) {
+//     return binaryParser(pathOrBinary)
+//   }
+//   const binaryString = fs.readFileSync(pathOrBinary, 'binary')
+//   return binaryParser(binaryString)
+// }
+
+// export default function parser(pathOrBufferOrBinaryString: string | Buffer) {
+//   if (Buffer.isBuffer(pathOrBufferOrBinaryString)) {
+//     return binaryParser(pathOrBufferOrBinaryString)
+//   } else if (typeof pathOrBufferOrBinaryString === 'string') {
+//     if (pathOrBufferOrBinaryString.length < 260) {
+//       try {
+//         const binaryString = fs.readFileSync(pathOrBufferOrBinaryString, 'utf-8')
+//         return binaryParser(binaryString)
+//       } catch (error) {
+//         // if file not found then treat it as binary string
+//         return binaryParser(pathOrBufferOrBinaryString)
+//       }
+//     } else {
+//       // max path length is 260, when exceeded param will be treated as binary string
+//       return binaryParser(pathOrBufferOrBinaryString)
+//     }
+//   } else {
+//     throw new Error('Only file path, buffer or binary string is supported!')
+//   }
+// }
+
+export interface ParserOptions {
+  type: 'binaryString' | 'path' | 'buffer'
+}
+export default function parser(target: string | Buffer, options?: ParserOptions) {
+  // seems 260 is the length limit of old windows standard
+  // so path length is not used to determine whether it's path or binary string
+  // the downside here is that if the filepath is incorrect, it will be treated as binary string by default
+  // but it can use options to define the target type
+  if (options.type === 'path' || (typeof target === 'string' && fs.existsSync(target))) {
+    const binaryString = fs.readFileSync(target as string, 'binary')
+    return binaryParser(binaryString)
+  } else {
+    return binaryParser(target)
   }
-  const binaryFile = fs.readFileSync(pathOrBinary, 'binary')
-  return binaryParser(binaryFile)
 }

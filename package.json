@@ -1,6 +1,6 @@
 {
   "name": "simple-epub-parser",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "A simple epub parser",
   "main": "lib/index.js",
   "types": "./types/index.d.ts",
@@ -15,7 +15,8 @@
     "build:es": "cross-env BABEL_ENV=es babel js --out-dir es",
     "build:umd": "cross-env NODE_ENV=development webpack src/index.ts dist/simple-epub-parser.js",
     "build:umd:min": "cross-env NODE_ENV=production webpack src/index.ts dist/simple-epub-parser.min.js",
-    "clean": "rimraf dist lib js es types"
+    "clean": "rimraf dist lib js es types",
+    "watch:lib": "npm run build:js -- --watch & npm run build:lib -- --watch"
   },
   "repository": {
     "type": "git",

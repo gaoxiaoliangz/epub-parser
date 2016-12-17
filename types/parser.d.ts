@@ -1,3 +1,4 @@
+/// <reference types="node" />
 export declare function binaryParser(binaryFile: any): Promise<{
     meta: {
         title: {};
@@ -10,7 +11,10 @@ export declare function binaryParser(binaryFile: any): Promise<{
         markdown: any;
     }[];
 }>;
-export default function parser(pathOrBinary: any, useBinary?: boolean): Promise<{
+export interface ParserOptions {
+    type: 'binaryString' | 'path' | 'buffer';
+}
+export default function parser(target: string | Buffer, options?: ParserOptions): Promise<{
     meta: {
         title: {};
         author: {};
