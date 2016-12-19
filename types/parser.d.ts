@@ -12,7 +12,7 @@ export declare function binaryParser(binaryFile: any): Promise<{
     }[];
 }>;
 export interface ParserOptions {
-    type: 'binaryString' | 'path' | 'buffer';
+    type?: 'binaryString' | 'path' | 'buffer';
 }
 export default function parser(target: string | Buffer, options?: ParserOptions): Promise<{
     meta: {
