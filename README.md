@@ -23,18 +23,18 @@ console.log('epub content:', parser('/path/to/file.epub'))
 console.log('epub content:', parser(binaryData, true))
 ```
 
-### parser(pathOrBinary, useBinary?: boolean)
+### parser(target?: string | buffer, options?: object)
 
-parser can process file referenced by path string or binary data, it treat the first parameter as path string by default (if the second parameter is not present or passed `false`). To parse binary data directly simply pass `false` to the second parameter. 
+#### target
 
-#### pathOrBinary
+type: `string` or `buffer`
 
-type: `string`
+It can be the path to the file or file's binary string or buffer
 
-The path to the file or file's binary data
+#### options
 
-#### useBinary
+type: `object`
 
-type: `boolean`
+##### type?: 'binaryString' | 'path' | 'buffer'
 
-Whether to treat the first parameter as binary data. If not present it will be treated as path.
+It forces the parser to treat supplied target as the defined type, if not defined the parser itself will decide how to treat the file (useful when you are not sure if the path is valid).
