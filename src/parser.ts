@@ -55,14 +55,6 @@ const resolveContent = zipPath => zipInstance => {
 }
 
 const getContentFromSpine = (spine, root) => zipInstance => {
-  // return _(spine)
-  //   .union()
-  //   .map(href => ({
-  //     id: parseHref(href).name,
-  //     markdown: resolveContent(`${root}${href}`)(zipInstance)
-  //   }))
-  //   .value()
-
   // no chain
   return _.map(_.union(spine), href => ({
     id: parseHref(href).name,
@@ -110,33 +102,43 @@ export async function binaryParser(binaryFile) {
   try {
     const zip = new nodeZip(binaryFile, { binary: true, base64: false, checkCRC32: true })
     const containerXml = extractZipContent('META-INF/container.xml')(zip)
-
     const containerJSON = await xmlToJs(containerXml)
     const opfPath = containerJSON.container.rootfiles[0].rootfile[0]['$']['full-path']
     const root = getOpsRoot(opfPath)
-    const contentXml = extractZipContent(`${root}content.opf`)(zip)
-    const tocXml = extractZipContent(`${root}toc.ncx`)(zip)
-
-    const tocJSON = await xmlToJs(tocXml)
-    const parsedToc = parseToc(tocJSON)
-
+    // opf file
+    const contentXml = extractZipContent(opfPath)(zip)
     const contentJSON = await xmlToJs(contentXml)
-    const metadata = _.get(contentJSON, ['package', 'metadata'], [])
-    const title = _.get(metadata[0], ['dc:title', 0])
-    let author = _.get(metadata[0], ['dc:creator', 0])
+    const ncxId = _.get(contentJSON, ['package', 'spine', 0, '$', 'toc'])
+    let ncxPath = ''
 
     const manifest = _.get(contentJSON, ['package', 'manifest', 0, 'item'], [])
       .map(item => item.$)
-      .map(item => ({
-        id: item.id,
-        href: item.href
-      }))
+      .map(item => {
+        if (item.id === ncxId) {
+          ncxPath = item.href
+        }
+        return {
+          id: item.id,
+          href: item.href
+        }
+      })
 
     const spine = _.get(contentJSON, ['package', 'spine', 0, 'itemref'], [])
-      .map(item => item.$.idref)
+      .map(item => {
+        return item.$.idref
+      })
       .map(id => {
         return _.find(manifest, { id }).href
       })
+
+    // TODO: ncxPath is null
+    const tocXml = extractZipContent(`${root}${ncxPath}`)(zip)
+    const tocJSON = await xmlToJs(tocXml)
+    const parsedToc = parseToc(tocJSON)
+
+    const metadata = _.get(contentJSON, ['package', 'metadata'], [])
+    const title = _.get(metadata[0], ['dc:title', 0])
+    let author = _.get(metadata[0], ['dc:creator', 0])
 
     if (typeof author === 'object') {
       author = _.get(author, ['_'])
@@ -160,35 +162,6 @@ export async function binaryParser(binaryFile) {
     return Promise.reject(error)
   }
 }
-
-// export default function parser(pathOrBinary, useBinary: boolean = false) {
-//   if (useBinary) {
-//     return binaryParser(pathOrBinary)
-//   }
-//   const binaryString = fs.readFileSync(pathOrBinary, 'binary')
-//   return binaryParser(binaryString)
-// }
-
-// export default function parser(pathOrBufferOrBinaryString: string | Buffer) {
-//   if (Buffer.isBuffer(pathOrBufferOrBinaryString)) {
-//     return binaryParser(pathOrBufferOrBinaryString)
-//   } else if (typeof pathOrBufferOrBinaryString === 'string') {
-//     if (pathOrBufferOrBinaryString.length < 260) {
-//       try {
-//         const binaryString = fs.readFileSync(pathOrBufferOrBinaryString, 'utf-8')
-//         return binaryParser(binaryString)
-//       } catch (error) {
-//         // if file not found then treat it as binary string
-//         return binaryParser(pathOrBufferOrBinaryString)
-//       }
-//     } else {
-//       // max path length is 260, when exceeded param will be treated as binary string
-//       return binaryParser(pathOrBufferOrBinaryString)
-//     }
-//   } else {
-//     throw new Error('Only file path, buffer or binary string is supported!')
-//   }
-// }
 
 export interface ParserOptions {
   type?: 'binaryString' | 'path' | 'buffer'

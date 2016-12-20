@@ -1,7 +1,7 @@
 import parseHref from './href'
 
 export const resolveInlineNavHref = href => {
-  if (href.indexOf('http://') === -1) {
+  if (href && href.indexOf('http://') === -1) {
     const parsed = parseHref(href)
 
     if (parsed.hash) {
