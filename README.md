@@ -19,11 +19,13 @@ npm install simple-epub-parser --save
 ```js
 import parser from 'simple-epub-parser'
 
-console.log('epub content:', parser('/path/to/file.epub'))
-console.log('epub content:', parser(binaryData, true))
+console.log('epub content:', parser(binaryData))
+console.log('epub content:', parser('/path/to/file.epub', {
+  type: 'path'
+}))
 ```
 
-### parser(target?: string | buffer, options?: object)
+### parser(target: string | buffer, options?: object)
 
 #### target
 
@@ -35,6 +37,6 @@ It can be the path to the file or file's binary string or buffer
 
 type: `object`
 
-##### type?: 'binaryString' | 'path' | 'buffer'
+##### type(optional): 'binaryString' | 'path' | 'buffer'
 
 It forces the parser to treat supplied target as the defined type, if not defined the parser itself will decide how to treat the file (useful when you are not sure if the path is valid).
