@@ -4,3 +4,10 @@ javascripts/
 js/
 stylesheets/
 test/
+src/
+.babelrc
+babel-lodash-es.js
+index.html
+params.json
+tsconfig.json
+webpack.config.js
