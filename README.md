@@ -21,6 +21,9 @@ npm install simple-epub-parser --save
 
 ```js
 import parser from 'simple-epub-parser'
+// Note:
+// if you use `require` don't forget to add `.default` to your import
+// const parser = require('simple-epub-parser').default
 
 console.log('epub content:', parser(binaryData))
 console.log('epub content:', parser('/path/to/file.epub', {
