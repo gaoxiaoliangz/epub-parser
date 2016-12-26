@@ -1,6 +1,6 @@
 {
   "name": "simple-epub-parser",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "A simple epub parser",
   "main": "lib/index.js",
   "types": "./types/index.d.ts",
