@@ -3,6 +3,7 @@
 > An easy-to-use epub parser written in TypeScript. 
 
 [![npm version](https://badge.fury.io/js/simple-epub-parser.svg)](https://badge.fury.io/js/simple-epub-parser)
+[![build state](https://api.travis-ci.org/gaoxiaoliangz/simple-epub-parser.svg?branch=master)](https://travis-ci.org/gaoxiaoliangz/simple-epub-parser)
 
 The package exports a simple parser function which input epub file and output as JavaScript object. The output object is consisted of `nav`, `flesh` and `meta`.
 
