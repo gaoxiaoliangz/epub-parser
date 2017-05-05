@@ -1,5 +1,5 @@
 {
-  "name": "simple-epub-parser",
+  "name": "@gxl/epub-parser",
   "version": "0.4.3",
   "description": "A simple epub parser",
   "main": "lib/index.js",
