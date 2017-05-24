@@ -18,7 +18,7 @@ export function flattenArray(arrayOfNestedObj, childrenName = 'children') {
   return list
 }
 
-interface ParseNestedObjectConfig {
+export interface ParseNestedObjectConfig {
   preFilter?: (node) => boolean
   postFilter?: (node) => boolean
 

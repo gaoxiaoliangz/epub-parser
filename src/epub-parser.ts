@@ -7,7 +7,7 @@ import parseSection, { Section } from './parseSection'
 
 const xmlParser = new xml2js.Parser()
 
-const xmlToJs = xml => {
+const xmlToJs = (xml) => {
   return new Promise<any>((resolve, reject) => {
     xmlParser.parseString(xml, (err, object) => {
       if (err) {
@@ -19,7 +19,7 @@ const xmlToJs = xml => {
   })
 }
 
-const determineRoot = opfPath => {
+const determineRoot = (opfPath) => {
   let root = ''
   // set the opsRoot for resolving paths
   if (opfPath.match(/\//)) { // not at top level
@@ -34,30 +34,31 @@ const determineRoot = opfPath => {
   return root
 }
 
-const parseToc = tocObj => {
+const _genStructure = (tocObj) => {
   const rootNavPoints = _.get(tocObj, ['ncx', 'navMap', '0', 'navPoint'], [])
 
-  function parseNavPoint(navPoint) {
+  const parseNavPoint = (navPoint) => {
     const src = _.get(navPoint, ['content', '0', '$', 'src'], '')
-    const name = _.get(navPoint, ['navLabel', '0', 'text', '0'])
+    // const name = _.get(navPoint, ['navLabel', '0', 'text', '0'])
     const playOrder = _.get(navPoint, ['$', 'playOrder']) as string
-    const parsedSrc = parseLink(src)
+    // const parsedSrc = parseLink(src)
     let children = navPoint.navPoint
 
     if (children) {
+      // tslint:disable-next-line:no-use-before-declare
       children = parseNavPoints(children)
     }
 
     return {
       src,
-      srcObject: parsedSrc,
-      name,
+      // srcObject: parsedSrc,
+      // name,
       playOrder,
       children
     }
   }
 
-  function parseNavPoints(navPoints) {
+  const parseNavPoints = (navPoints) => {
     return navPoints.map(point => {
       return parseNavPoint(point)
     })
@@ -107,8 +108,17 @@ export class Epub {
     this._zip = new nodeZip(buffer, { binary: true, base64: false, checkCRC32: true })
   }
 
-  resolve(path: string) {
-    const file = this._zip.file(path)
+  resolve(path: string): {
+    asText: () => string
+  } {
+    let _path
+    if (path[0] === '/') {
+      // use absolute path, root is zip root
+      _path = path.substr(1)
+    } else {
+      _path = this._root + path
+    }
+    const file = this._zip.file(_path)
     if (file) {
       return file
     } else {
@@ -116,13 +126,13 @@ export class Epub {
     }
   }
 
-  async resolveXML(path) {
+  async _resolveXMLAsJsObject(path) {
     const xml = this.resolve(path).asText()
     return xmlToJs(xml)
   }
 
   private async _getOpfPath() {
-    const container = await this.resolveXML('META-INF/container.xml')
+    const container = await this._resolveXMLAsJsObject('/META-INF/container.xml')
     const opfPath = container.container.rootfiles[0].rootfile[0]['$']['full-path']
     return opfPath
   }
@@ -144,23 +154,21 @@ export class Epub {
     return _.map(_.union(this._spine), id => {
       const path = _.find(this._manifest, { id }).href
       const pathObject = parseLink(path)
-      const html = this.resolve(`${this._root}${path}`).asText()
+      const html = this.resolve(path).asText()
       return parseSection({ id, htmlString: html, resourceResolver: this.resolve.bind(this) })
     })
   }
 
   async parse() {
     const opfPath = await this._getOpfPath()
-
     this._root = determineRoot(opfPath)
-    this._content = await this.resolveXML(opfPath)
+    this._content = await this._resolveXMLAsJsObject(opfPath)
     this._manifest = this._getManifest()
     this._spine = this._getSpine()
-
     const tocID = _.get(this._content, ['package', 'spine', 0, '$', 'toc']) as string
     const tocPath = _.find(this._manifest, { id: tocID }).href
-    this._toc = await this.resolveXML(`${this._root}${tocPath}`)
-    this.toc = parseToc(this._toc)
+    this._toc = await this._resolveXMLAsJsObject(tocPath)
+    this.toc = _genStructure(this._toc)
     this._metadata = _.get(this._content, ['package', 'metadata'], [])
     this.metadata = parseMetadata(this._metadata)
     this.sections = this._resolveSectionsFromSpine()

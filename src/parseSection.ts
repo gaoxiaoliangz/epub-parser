@@ -1,12 +1,13 @@
 import path from 'path'
 import parseHTML from './parseHTML'
 import parseLink from './link'
+import md5 from 'md5'
 
 const isInternalUri = uri => {
   return uri.indexOf('http://') === -1 && uri.indexOf('https://') === -1
 }
 
-type ParseSectionConfig = {
+export type ParseSectionConfig = {
   id: string
   htmlString: string
   resourceResolver: any // function
@@ -18,7 +19,7 @@ export class Section {
   private _resourceResolver: any // function
 
   constructor({ id, htmlString, resourceResolver }: ParseSectionConfig) {
-    this.id = id
+    this.id = md5(id)
     this.htmlString = htmlString
     this._resourceResolver = resourceResolver
   }

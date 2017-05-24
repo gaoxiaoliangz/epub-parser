@@ -5,7 +5,8 @@ const epubParser = require('../../lib/index.js').default
 
 app.use('/', (req, res) => {
   epubParser('../../epubs/file-1.epub').then(result => {
-    res.send(result)
+    const obj = result.sections[1].toHtmlObject()
+    res.send('ok')
   })
 })
 

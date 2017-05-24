@@ -44,7 +44,7 @@ const parseRawHTML = HTMLString => {
     .documentElement
 }
 
-interface ParseHTMLObjectConfig {
+export interface ParseHTMLObjectConfig {
   resolveSrc?: (src: string) => string
   resolveHref?: (href: string) => string
 }

@@ -1,0 +1,73 @@
+{
+  "rulesDirectory": ["node_modules/vrsource-tslint-rules/rules"],
+  "rules": {
+    "class-name": false,
+    "comment-format": [
+      true,
+      "check-space"
+    ],
+    "indent": [
+      true,
+      "spaces"
+    ],
+    "no-duplicate-variable": true,
+    "no-eval": true,
+    "no-internal-module": true,
+    "no-trailing-whitespace": false,
+    "no-var-keyword": true,
+    "one-line": [
+      true,
+      "check-open-brace",
+      "check-whitespace"
+    ],
+    "quotemark": [
+      true,
+      "single",
+      "jsx-double"
+    ],
+    "semicolon": [
+      true,
+      "never"
+    ],
+    "triple-equals": [
+      true,
+      "allow-null-check"
+    ],
+    "typedef-whitespace": [
+      true,
+      {
+        "call-signature": "nospace",
+        "index-signature": "nospace",
+        "parameter": "nospace",
+        "property-declaration": "nospace",
+        "variable-declaration": "nospace"
+      }
+    ],
+    "variable-name": [
+      true,
+      "ban-keywords"
+    ],
+    "whitespace": [
+      true,
+      "check-branch",
+      "check-decl",
+      "check-operator",
+      "check-separator",
+      "check-type"
+    ],
+    "no-shadowed-variable": true,
+    "no-unused-expression": true,
+    "no-use-before-declare": true,
+    "no-unused-variable": [
+      true,
+      {
+        "ignore-pattern": ["^_|React"]
+      }
+    ],
+    "one-variable-per-declaration": [true, "ignore-for-loop"],
+    "no-console": [true, "log"],
+    
+    // from plugin
+    "no-param-reassign": true
+  }
+}
