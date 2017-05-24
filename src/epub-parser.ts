@@ -3,6 +3,7 @@ import xml2js from 'xml2js'
 import _ from 'lodash'
 import nodeZip from 'node-zip'
 import parseLink from './link'
+import parseSection, { Section } from './parseSection'
 
 const xmlParser = new xml2js.Parser()
 
@@ -18,7 +19,7 @@ const xmlToJs = xml => {
   })
 }
 
-const getRoot = opfPath => {
+const determineRoot = opfPath => {
   let root = ''
   // set the opsRoot for resolving paths
   if (opfPath.match(/\//)) { // not at top level
@@ -82,31 +83,32 @@ const parseMetadata = metadata => {
   return meta
 }
 
-class Epub {
-  private zip: any // nodeZip instance
-  private opfPath: string
-  private root: string
+export class Epub {
+  private _zip: any // nodeZip instance
+  // private _opfPath: string
+  private _root: string
   private _content: GeneralObject
-  private manifest: any[]
-  private spine: string[] // array of ids defined in manifest
+  private _manifest: any[]
+  private _spine: string[] // array of ids defined in manifest
   private _toc: GeneralObject
   private _metadata: GeneralObject
   toc: GeneralObject
   metadata: GeneralObject
-  bookContent: {
-    id: string
-    html: string
-    path: string
-    // todo: parseLink type
-    pathObject: GeneralObject
-  }[]
+  // sections: {
+  //   id: string
+  //   html: string
+  //   path: string
+  //   // todo: parseLink type
+  //   pathObject: GeneralObject
+  // }[]
+  sections: Section[]
 
   constructor(buffer) {
-    this.zip = new nodeZip(buffer, { binary: true, base64: false, checkCRC32: true })
+    this._zip = new nodeZip(buffer, { binary: true, base64: false, checkCRC32: true })
   }
 
   resolve(path: string) {
-    const file = this.zip.file(path)
+    const file = this._zip.file(path)
     if (file) {
       return file
     } else {
@@ -119,7 +121,7 @@ class Epub {
     return xmlToJs(xml)
   }
 
-  async _getOpfPath() {
+  private async _getOpfPath() {
     const container = await this.resolveXML('META-INF/container.xml')
     const opfPath = container.container.rootfiles[0].rootfile[0]['$']['full-path']
     return opfPath
@@ -137,44 +139,54 @@ class Epub {
       })
   }
 
-  _getContentFromSpine() {
+  _resolveSectionsFromSpine() {
     // no chain
-    return _.map(_.union(this.spine), id => {
-      const path = _.find(this.manifest, { id }).href
+    return _.map(_.union(this._spine), id => {
+      const path = _.find(this._manifest, { id }).href
       const pathObject = parseLink(path)
-      return {
-        id,
-        path,
-        pathObject,
-        html: this.resolve(`${this.root}${path}`).asText()
-      }
+      const html = this.resolve(`${this._root}${path}`).asText()
+      return parseSection({ id, htmlString: html, resourceResolver: this.resolve.bind(this) })
     })
   }
 
   async parse() {
-    this.opfPath = await this._getOpfPath()
-    this.root = getRoot(this.opfPath)
-    this._content = await this.resolveXML(this.opfPath)
-    this.manifest = this._getManifest()
-    this.spine = this._getSpine()
+    const opfPath = await this._getOpfPath()
+
+    this._root = determineRoot(opfPath)
+    this._content = await this.resolveXML(opfPath)
+    this._manifest = this._getManifest()
+    this._spine = this._getSpine()
 
     const tocID = _.get(this._content, ['package', 'spine', 0, '$', 'toc']) as string
-    const tocPath = _.find(this.manifest, { id: tocID }).href
-    this._toc = await this.resolveXML(`${this.root}${tocPath}`)
+    const tocPath = _.find(this._manifest, { id: tocID }).href
+    this._toc = await this.resolveXML(`${this._root}${tocPath}`)
     this.toc = parseToc(this._toc)
     this._metadata = _.get(this._content, ['package', 'metadata'], [])
     this.metadata = parseMetadata(this._metadata)
-    this.bookContent = this._getContentFromSpine()
+    this.sections = this._resolveSectionsFromSpine()
+
+    // remove private member vars
+    const isPrivateProp = key => {
+      if (key.length > 1) {
+        if (key[0] === '_' && key[1] !== '_') {
+          return true
+        }
+        return false
+      }
+      return false
+    }
+
+    _.forEach(this, (val, key) => {
+      if (isPrivateProp(key)) {
+        delete this[key]
+      }
+    })
+
     return this
   }
 }
 
-const t = new Epub('fjij')
-
-// t._z
-
-
-interface ParserOptions {
+export interface ParserOptions {
   type?: 'binaryString' | 'path' | 'buffer'
 }
 export default function parserWrapper(target: string | Buffer, options: ParserOptions = {}) {
