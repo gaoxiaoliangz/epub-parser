@@ -1,76 +1,70 @@
-'use strict'
-var webpack = require('webpack')
-var LodashModuleReplacementPlugin = require('lodash-webpack-plugin')
-var nodeExternals = require('webpack-node-externals')
+const webpack = require('webpack')
+const nodeExternals = require('webpack-node-externals')
+const fs = require('fs')
+const path = require('path')
 
-var env = process.env.NODE_ENV
-
-var reactExternal = {
-  root: 'React',
-  commonjs2: 'react',
-  commonjs: 'react',
-  amd: 'react'
+const appDirectory = fs.realpathSync(process.cwd())
+function resolveApp(relativePath) {
+  return path.resolve(appDirectory, relativePath)
 }
 
-var reduxExternal = {
-  root: 'Redux',
-  commonjs2: 'redux',
-  commonjs: 'redux',
-  amd: 'redux'
-}
+module.exports = {
+  entry: {
+    epubParser: [resolveApp('src/epubParser.ts')]
+  },
+  output: {
+    path: resolveApp('build/lib'),
+    filename: '[name].js',
+    libraryTarget: 'commonjs2',
+    chunkFilename: 'chunk.[id].js',
 
-var reactReduxExternal = {
-  root: 'ReactRedux',
-  commonjs2: 'react-redux',
-  commonjs: 'react-redux',
-  amd: 'react-redux'
-}
-
-var config = {
+    // editor break point support
+    devtoolModuleFilenameTemplate: '[resource-path]'
+  },
+  plugins: [
+    // add support for node source map
+    new webpack.BannerPlugin({
+      banner: `require('source-map-support').install()`,
+      raw: true,
+      entryOnly: true
+    }),
+  ],
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.tsx?$/,
-        loaders: ['babel', 'awesome-typescript'],
-        exclude: /node_modules/
+        use: [
+          {
+            loader: 'babel-loader'
+          },
+          {
+            loader: 'awesome-typescript-loader'
+          }
+        ]
+      },
+      {
+        test: /\.js?$/,
+        exclude: /(node_modules|bower_components)/,
+        loader: 'babel-loader'
       }
     ]
   },
-  output: {
-    library: 'ReduxForm',
-    libraryTarget: 'umd'
-  },
-  plugins: [
-    new LodashModuleReplacementPlugin,
-    new webpack.optimize.OccurenceOrderPlugin(),
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(env)
-    })
-  ],
+  devtool: 'source-map',
   resolve: {
-    extensions: ['', '.js', '.jsx', '.ts', '.tsx'],
+    modules: [
+      'node_modules'
+    ],
+    extensions: ['.js', '.jsx', '.ts', '.tsx']
   },
   target: 'node',
   node: {
-    __filename: true,
-    __dirname: true,
-    console: false
+    console: false,
+    global: false,
+    process: false,
+    Buffer: false,
+    __filename: false,
+    __dirname: false,
+    setImmediate: false
   },
-  externals: [nodeExternals()]
+  externals: [nodeExternals(), 'xml2js', 'node-zip', 'jszip', 'crypt', 'jsdom']
 }
-
-if (env === 'production') {
-  config.plugins.push(
-    new webpack.optimize.UglifyJsPlugin({
-      compressor: {
-        pure_getters: true,
-        unsafe: true,
-        unsafe_comps: true,
-        warnings: false
-      }
-    })
-  )
-  config.plugins.push(new webpack.optimize.DedupePlugin())
-}
-
-module.exports = config
