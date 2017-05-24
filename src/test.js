@@ -11,9 +11,6 @@ function resolveApp(relativePath) {
 epubParser(resolveApp('epubs/zhihu.epub')).then(result => {
   result.sections.forEach((item, index) => {
     const obj = item.toHtmlObject()
-    if (index > 10) {
-      console.log('here')
-    }
   })
 })
 

@@ -35,15 +35,15 @@ const determineRoot = (opfPath) => {
   return root
 }
 
-const parseMetadata = metadata => {
-  const title = _.get(metadata[0], ['dc:title', 0])
-  let author = _.get(metadata[0], ['dc:creator', 0])
+const parseMetadata = (metadata) => {
+  const title = _.get(metadata[0], ['dc:title', 0]) as string
+  let author = _.get(metadata[0], ['dc:creator', 0]) as string
 
   if (typeof author === 'object') {
-    author = _.get(author, ['_'])
+    author = _.get(author, ['_']) as string
   }
 
-  const publisher = _.get(metadata[0], ['dc:publisher', 0])
+  const publisher = _.get(metadata[0], ['dc:publisher', 0]) as string
   const meta = {
     title,
     author,
@@ -54,22 +54,19 @@ const parseMetadata = metadata => {
 
 export class Epub {
   private _zip: any // nodeZip instance
-  // private _opfPath: string
+  private _opfPath: string
   private _root: string
   private _content: GeneralObject
-  private manifest: any[]
+  private _manifest: any[]
   private _spine: string[] // array of ids defined in manifest
   private _toc: GeneralObject
   private _metadata: GeneralObject
   structure: GeneralObject
-  metadata: GeneralObject
-  // sections: {
-  //   id: string
-  //   html: string
-  //   path: string
-  //   // todo: parseLink type
-  //   pathObject: GeneralObject
-  // }[]
+  info: {
+    title: string
+    author: string
+    publisher: string
+  }
   sections: Section[]
 
   constructor(buffer) {
@@ -111,7 +108,7 @@ export class Epub {
     const parseNavPoint = (navPoint) => {
       // link to section
       const link = _.get(navPoint, ['content', '0', '$', 'src'], '')
-      // const name = _.get(navPoint, ['navLabel', '0', 'text', '0'])
+      const name = _.get(navPoint, ['navLabel', '0', 'text', '0'])
       const playOrder = _.get(navPoint, ['$', 'playOrder']) as string
       const { hash } = parseLink(link)
       let children = navPoint.navPoint
@@ -124,10 +121,9 @@ export class Epub {
       const sectionId = this._resolveIdFromLink(link)
 
       return {
+        name,
         sectionId,
         hash,
-        // srcObject: parsedSrc,
-        // name,
         playOrder,
         children
       }
@@ -142,14 +138,14 @@ export class Epub {
     return parseNavPoints(rootNavPoints)
   }
 
-  _getManifest() {
-    return _.get(this._content, ['package', 'manifest', 0, 'item'], [])
+  _getManifest(content) {
+    return _.get(content, ['package', 'manifest', 0, 'item'], [])
       .map(item => item.$) as any[]
   }
 
   _resolveIdFromLink(href) {
     const { name: tarName } = parseLink(href)
-    const tarItem = _.find(this.manifest, item => {
+    const tarItem = _.find(this._manifest, item => {
       const { name } = parseLink(item.href)
       return name === tarName
     })
@@ -170,8 +166,7 @@ export class Epub {
   _resolveSectionsFromSpine() {
     // no chain
     return _.map(_.union(this._spine), id => {
-      const path = _.find(this.manifest, { id }).href
-      // const pathObject = parseLink(path)
+      const path = _.find(this._manifest, { id }).href
       const html = this.resolve(path).asText()
       return parseSection({
         id,
@@ -185,15 +180,22 @@ export class Epub {
   async parse() {
     const opfPath = await this._getOpfPath()
     this._root = determineRoot(opfPath)
-    this._content = await this._resolveXMLAsJsObject('/' + opfPath)
-    this.manifest = this._getManifest()
+
+    const content = await this._resolveXMLAsJsObject('/' + opfPath)
+    const manifest = this._getManifest(content)
+    const tocID = _.get(content, ['package', 'spine', 0, '$', 'toc'], '')
+    const tocPath = _.find(manifest, { id: tocID }).href
+    const toc = await this._resolveXMLAsJsObject(tocPath)
+    const metadata = _.get(content, ['package', 'metadata'], [])
+
+    this._manifest = manifest
+    this._content = content
+    this._opfPath = opfPath
+    this._toc = toc
     this._spine = this._getSpine()
-    const tocID = _.get(this._content, ['package', 'spine', 0, '$', 'toc']) as string
-    const tocPath = _.find(this.manifest, { id: tocID }).href
-    this._toc = await this._resolveXMLAsJsObject(tocPath)
-    this.structure = this._genStructure(this._toc)
-    this._metadata = _.get(this._content, ['package', 'metadata'], [])
-    this.metadata = parseMetadata(this._metadata)
+    this.structure = this._genStructure(toc)
+    this._metadata = metadata
+    this.info = parseMetadata(metadata)
     this.sections = this._resolveSectionsFromSpine()
 
     // remove private member vars

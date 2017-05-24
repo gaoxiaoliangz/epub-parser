@@ -1,14 +1,19 @@
 {
-  "presets": ["es2015-no-commonjs", "react", "stage-2"],
   "env": {
     "development": {
-      "plugins": ["transform-runtime", "lodash", "transform-es2015-modules-commonjs"]
+      "plugins": [
+        "babel-plugin-transform-es2015-classes"
+      ]
     },
     "production": {
-      "plugins": ["transform-runtime", "lodash", "transform-es2015-modules-commonjs"]
-    },
-    "es": {
-      "plugins": ["transform-runtime", "lodash", "./babel-lodash-es"]
+      "presets": [
+        "es2015"
+      ],
+      "plugins": [
+        "transform-runtime",
+        "lodash",
+        "transform-es2015-modules-commonjs"
+      ]
     }
   }
 }
