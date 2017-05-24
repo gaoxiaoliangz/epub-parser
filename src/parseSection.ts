@@ -1,6 +1,6 @@
 import path from 'path'
 import parseHTML from './parseHTML'
-import parseLink from './link'
+import parseLink from './parseLink'
 import md5 from 'md5'
 
 const isInternalUri = (uri) => {

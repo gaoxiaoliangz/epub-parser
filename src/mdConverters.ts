@@ -1,8 +1,8 @@
-import parseHref from './href'
+import parseLink from './parseLink'
 
 export const resolveInlineNavHref = href => {
   if (href && href.indexOf('http://') === -1) {
-    const parsed = parseHref(href)
+    const parsed = parseLink(href)
 
     if (parsed.hash) {
       return `#${parsed.name}$${parsed.hash}`
