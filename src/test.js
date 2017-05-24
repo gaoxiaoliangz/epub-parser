@@ -11,6 +11,7 @@ function resolveApp(relativePath) {
 epubParser(resolveApp('epubs/zhihu.epub')).then(result => {
   result.sections.forEach((item, index) => {
     const obj = item.toHtmlObject()
+    const md = item.toMarkdown()
   })
 })
 

@@ -193,8 +193,8 @@ export class Epub {
     this._opfPath = opfPath
     this._toc = toc
     this._spine = this._getSpine()
-    this.structure = this._genStructure(toc)
     this._metadata = metadata
+    this.structure = this._genStructure(toc)
     this.info = parseMetadata(metadata)
     this.sections = this._resolveSectionsFromSpine()
 

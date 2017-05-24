@@ -1,7 +1,9 @@
 import path from 'path'
-import parseHTML from './parseHTML'
-import parseLink from './parseLink'
 import md5 from 'md5'
+import toMarkdown from 'to-markdown'
+import parseLink from './parseLink'
+import parseHTML from './parseHTML'
+import * as mdConverters from './mdConverters'
 
 const isInternalUri = (uri) => {
   return uri.indexOf('http://') === -1 && uri.indexOf('https://') === -1
@@ -25,6 +27,12 @@ export class Section {
     this.htmlString = htmlString
     this._resourceResolver = resourceResolver
     this._idResolver = idResolver
+  }
+
+  toMarkdown() {
+    return toMarkdown(this.htmlString, {
+      converters: [mdConverters.h, mdConverters.span, mdConverters.div, mdConverters.img, mdConverters.a]
+    })
   }
 
   toHtmlObject() {
