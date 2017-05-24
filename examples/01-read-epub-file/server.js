@@ -4,9 +4,13 @@ const app = express()
 const epubParser = require('../../lib/index.js').default
 
 app.use('/', (req, res) => {
-  epubParser('../../epubs/file-1.epub').then(result => {
-    const obj = result.sections[1].toHtmlObject()
-    res.send('ok')
+  epubParser('../../epubs/zhihu.epub').then(result => {
+    result.sections.forEach((item, index) => {
+      const obj = item.toHtmlObject()
+      if (index > 10) {
+        res.send('ok')
+      }
+    })
   })
 })
 

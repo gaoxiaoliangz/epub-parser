@@ -2,6 +2,7 @@ import fs from 'fs'
 import xml2js from 'xml2js'
 import _ from 'lodash'
 import nodeZip from 'node-zip'
+import md5 from 'md5'
 import parseLink from './link'
 import parseSection, { Section } from './parseSection'
 
@@ -34,39 +35,6 @@ const determineRoot = (opfPath) => {
   return root
 }
 
-const _genStructure = (tocObj) => {
-  const rootNavPoints = _.get(tocObj, ['ncx', 'navMap', '0', 'navPoint'], [])
-
-  const parseNavPoint = (navPoint) => {
-    const src = _.get(navPoint, ['content', '0', '$', 'src'], '')
-    // const name = _.get(navPoint, ['navLabel', '0', 'text', '0'])
-    const playOrder = _.get(navPoint, ['$', 'playOrder']) as string
-    // const parsedSrc = parseLink(src)
-    let children = navPoint.navPoint
-
-    if (children) {
-      // tslint:disable-next-line:no-use-before-declare
-      children = parseNavPoints(children)
-    }
-
-    return {
-      src,
-      // srcObject: parsedSrc,
-      // name,
-      playOrder,
-      children
-    }
-  }
-
-  const parseNavPoints = (navPoints) => {
-    return navPoints.map(point => {
-      return parseNavPoint(point)
-    })
-  }
-
-  return parseNavPoints(rootNavPoints)
-}
-
 const parseMetadata = metadata => {
   const title = _.get(metadata[0], ['dc:title', 0])
   let author = _.get(metadata[0], ['dc:creator', 0])
@@ -89,11 +57,11 @@ export class Epub {
   // private _opfPath: string
   private _root: string
   private _content: GeneralObject
-  private _manifest: any[]
+  private manifest: any[]
   private _spine: string[] // array of ids defined in manifest
   private _toc: GeneralObject
   private _metadata: GeneralObject
-  toc: GeneralObject
+  structure: GeneralObject
   metadata: GeneralObject
   // sections: {
   //   id: string
@@ -137,9 +105,58 @@ export class Epub {
     return opfPath
   }
 
+  _genStructure(tocObj) {
+    const rootNavPoints = _.get(tocObj, ['ncx', 'navMap', '0', 'navPoint'], [])
+
+    const parseNavPoint = (navPoint) => {
+      // link to section
+      const link = _.get(navPoint, ['content', '0', '$', 'src'], '')
+      // const name = _.get(navPoint, ['navLabel', '0', 'text', '0'])
+      const playOrder = _.get(navPoint, ['$', 'playOrder']) as string
+      // const parsedSrc = parseLink(src)
+      let children = navPoint.navPoint
+
+      if (children) {
+        // tslint:disable-next-line:no-use-before-declare
+        children = parseNavPoints(children)
+      }
+
+      const sectionId = this._resolveIdFromLink(link)
+
+      return {
+        sectionId,
+        // srcObject: parsedSrc,
+        // name,
+        playOrder,
+        children
+      }
+    }
+
+    const parseNavPoints = (navPoints) => {
+      return navPoints.map(point => {
+        return parseNavPoint(point)
+      })
+    }
+
+    return parseNavPoints(rootNavPoints)
+  }
+
   _getManifest() {
     return _.get(this._content, ['package', 'manifest', 0, 'item'], [])
       .map(item => item.$) as any[]
+  }
+
+  _resolveIdFromLink(href) {
+    const { name: tarName } = parseLink(href)
+    const tarItem = _.find(this.manifest, item => {
+      const { name } = parseLink(item.href)
+      return name === tarName
+    })
+    const id = _.get(tarItem, 'id', '')
+    if (id) {
+      return md5(id)
+    }
+    return null
   }
 
   _getSpine() {
@@ -152,10 +169,15 @@ export class Epub {
   _resolveSectionsFromSpine() {
     // no chain
     return _.map(_.union(this._spine), id => {
-      const path = _.find(this._manifest, { id }).href
-      const pathObject = parseLink(path)
+      const path = _.find(this.manifest, { id }).href
+      // const pathObject = parseLink(path)
       const html = this.resolve(path).asText()
-      return parseSection({ id, htmlString: html, resourceResolver: this.resolve.bind(this) })
+      return parseSection({
+        id,
+        htmlString: html,
+        resourceResolver: this.resolve.bind(this),
+        idResolver: this._resolveIdFromLink.bind(this)
+      })
     })
   }
 
@@ -163,12 +185,12 @@ export class Epub {
     const opfPath = await this._getOpfPath()
     this._root = determineRoot(opfPath)
     this._content = await this._resolveXMLAsJsObject(opfPath)
-    this._manifest = this._getManifest()
+    this.manifest = this._getManifest()
     this._spine = this._getSpine()
     const tocID = _.get(this._content, ['package', 'spine', 0, '$', 'toc']) as string
-    const tocPath = _.find(this._manifest, { id: tocID }).href
+    const tocPath = _.find(this.manifest, { id: tocID }).href
     this._toc = await this._resolveXMLAsJsObject(tocPath)
-    this.toc = _genStructure(this._toc)
+    this.structure = this._genStructure(this._toc)
     this._metadata = _.get(this._content, ['package', 'metadata'], [])
     this.metadata = parseMetadata(this._metadata)
     this.sections = this._resolveSectionsFromSpine()

@@ -3,36 +3,41 @@ import parseHTML from './parseHTML'
 import parseLink from './link'
 import md5 from 'md5'
 
-const isInternalUri = uri => {
+const isInternalUri = (uri) => {
   return uri.indexOf('http://') === -1 && uri.indexOf('https://') === -1
 }
 
 export type ParseSectionConfig = {
   id: string
   htmlString: string
-  resourceResolver: any // function
+  resourceResolver: (path: string) => any
+  idResolver: (link: string) => string
 }
 
 export class Section {
   id: string
   htmlString: string
-  private _resourceResolver: any // function
+  private _resourceResolver: (path: string) => any
+  private _idResolver: (link: string) => string
 
-  constructor({ id, htmlString, resourceResolver }: ParseSectionConfig) {
+  constructor({ id, htmlString, resourceResolver, idResolver }: ParseSectionConfig) {
     this.id = md5(id)
     this.htmlString = htmlString
     this._resourceResolver = resourceResolver
+    this._idResolver = idResolver
   }
 
   toHtmlObject() {
     return parseHTML(this.htmlString, {
       resolveHref: (href) => {
         if (isInternalUri(href)) {
-          const { name, hash } = parseLink(href)
+          const { hash } = parseLink(href)
+          // todo: what if a link only contains hash part?
+          const sectionId = this._idResolver(href)
           if (hash) {
-            return `#${name},${hash}`
+            return `#${sectionId},${hash}`
           }
-          return `#${name}`
+          return `#${sectionId}`
         }
         return href
       },
