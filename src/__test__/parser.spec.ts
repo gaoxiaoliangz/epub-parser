@@ -1,7 +1,8 @@
 import expect from 'expect.js'
-import parser from '../lib'
+// import parser from '../build/lib/epubParser'
+import parser from '../epubParser'
 import _ from 'lodash'
-import path from 'path'
+import * as path from 'path'
 
 const baseDir = process.cwd()
 const filesToBeTested = ['file-1', 'file-2', 'file-3', 'file-4']

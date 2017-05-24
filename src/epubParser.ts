@@ -1,8 +1,8 @@
-import fs from 'fs'
-import xml2js from 'xml2js'
-import _ from 'lodash'
-import nodeZip from 'node-zip'
-import md5 from 'md5'
+import * as fs from 'fs'
+import * as xml2js from 'xml2js'
+import * as _ from 'lodash'
+import * as nodeZip from 'node-zip'
+import * as md5 from 'md5'
 import parseLink from './link'
 import parseSection, { Section } from './parseSection'
 
@@ -90,7 +90,7 @@ export class Epub {
     if (file) {
       return file
     } else {
-      throw new Error(`${path} not found!`)
+      throw new Error(`${_path} not found!`)
     }
   }
 
@@ -185,7 +185,7 @@ export class Epub {
   async parse() {
     const opfPath = await this._getOpfPath()
     this._root = determineRoot(opfPath)
-    this._content = await this._resolveXMLAsJsObject(opfPath)
+    this._content = await this._resolveXMLAsJsObject('/' + opfPath)
     this.manifest = this._getManifest()
     this._spine = this._getSpine()
     const tocID = _.get(this._content, ['package', 'spine', 0, '$', 'toc']) as string
