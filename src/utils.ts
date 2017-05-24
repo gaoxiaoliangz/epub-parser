@@ -1,7 +1,5 @@
 import _ from 'lodash'
 
-const debug = require('debug')('readr:parsers:utils')
-
 export function flattenArray(arrayOfNestedObj, childrenName = 'children') {
   const list = []
 
