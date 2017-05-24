@@ -380,10 +380,6 @@ var _promise = __webpack_require__(12);
 
 var _promise2 = _interopRequireDefault(_promise);
 
-var _forEach2 = __webpack_require__(22);
-
-var _forEach3 = _interopRequireDefault(_forEach2);
-
 var _union2 = __webpack_require__(30);
 
 var _union3 = _interopRequireDefault(_union2);
@@ -574,7 +570,10 @@ var Epub = exports.Epub = function () {
                 var link = (0, _get3.default)(navPoint, ['content', '0', '$', 'src'], '');
                 // const name = _.get(navPoint, ['navLabel', '0', 'text', '0'])
                 var playOrder = (0, _get3.default)(navPoint, ['$', 'playOrder']);
-                // const parsedSrc = parseLink(src)
+
+                var _parseLink = (0, _link2.default)(link),
+                    hash = _parseLink.hash;
+
                 var children = navPoint.navPoint;
                 if (children) {
                     // tslint:disable-next-line:no-use-before-declare
@@ -583,6 +582,7 @@ var Epub = exports.Epub = function () {
                 var sectionId = _this._resolveIdFromLink(link);
                 return {
                     sectionId: sectionId,
+                    hash: hash,
                     // srcObject: parsedSrc,
                     // name,
                     playOrder: playOrder,
@@ -606,12 +606,12 @@ var Epub = exports.Epub = function () {
     }, {
         key: '_resolveIdFromLink',
         value: function _resolveIdFromLink(href) {
-            var _parseLink = (0, _link2.default)(href),
-                tarName = _parseLink.name;
+            var _parseLink2 = (0, _link2.default)(href),
+                tarName = _parseLink2.name;
 
             var tarItem = (0, _find3.default)(this.manifest, function (item) {
-                var _parseLink2 = (0, _link2.default)(item.href),
-                    name = _parseLink2.name;
+                var _parseLink3 = (0, _link2.default)(item.href),
+                    name = _parseLink3.name;
 
                 return name === tarName;
             });
@@ -650,9 +650,7 @@ var Epub = exports.Epub = function () {
         key: 'parse',
         value: function parse() {
             return __awaiter(this, void 0, void 0, _regenerator2.default.mark(function _callee3() {
-                var _this3 = this;
-
-                var opfPath, tocID, tocPath, isPrivateProp;
+                var opfPath, tocID, tocPath;
                 return _regenerator2.default.wrap(function _callee3$(_context3) {
                     while (1) {
                         switch (_context3.prev = _context3.next) {
@@ -685,25 +683,23 @@ var Epub = exports.Epub = function () {
                                 this.metadata = parseMetadata(this._metadata);
                                 this.sections = this._resolveSectionsFromSpine();
                                 // remove private member vars
-
-                                isPrivateProp = function isPrivateProp(key) {
-                                    if (key.length > 1) {
-                                        if (key[0] === '_' && key[1] !== '_') {
-                                            return true;
-                                        }
-                                        return false;
-                                    }
-                                    return false;
-                                };
-
-                                (0, _forEach3.default)(this, function (val, key) {
-                                    if (isPrivateProp(key)) {
-                                        delete _this3[key];
-                                    }
-                                });
+                                // const isPrivateProp = key => {
+                                //   if (key.length > 1) {
+                                //     if (key[0] === '_' && key[1] !== '_') {
+                                //       return true
+                                //     }
+                                //     return false
+                                //   }
+                                //   return false
+                                // }
+                                // _.forEach(this, (val, key) => {
+                                //   if (isPrivateProp(key)) {
+                                //     delete this[key]
+                                //   }
+                                // })
                                 return _context3.abrupt('return', this);
 
-                            case 21:
+                            case 19:
                             case 'end':
                                 return _context3.stop();
                         }
@@ -1154,12 +1150,7 @@ module.exports = require("lodash/find");
 module.exports = require("lodash/flattenDeep");
 
 /***/ }),
-/* 22 */
-/***/ (function(module, exports) {
-
-module.exports = require("lodash/forEach");
-
-/***/ }),
+/* 22 */,
 /* 23 */
 /***/ (function(module, exports) {
 

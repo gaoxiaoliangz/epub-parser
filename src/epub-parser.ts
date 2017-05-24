@@ -113,7 +113,7 @@ export class Epub {
       const link = _.get(navPoint, ['content', '0', '$', 'src'], '')
       // const name = _.get(navPoint, ['navLabel', '0', 'text', '0'])
       const playOrder = _.get(navPoint, ['$', 'playOrder']) as string
-      // const parsedSrc = parseLink(src)
+      const { hash } = parseLink(link)
       let children = navPoint.navPoint
 
       if (children) {
@@ -125,6 +125,7 @@ export class Epub {
 
       return {
         sectionId,
+        hash,
         // srcObject: parsedSrc,
         // name,
         playOrder,
@@ -196,21 +197,21 @@ export class Epub {
     this.sections = this._resolveSectionsFromSpine()
 
     // remove private member vars
-    const isPrivateProp = key => {
-      if (key.length > 1) {
-        if (key[0] === '_' && key[1] !== '_') {
-          return true
-        }
-        return false
-      }
-      return false
-    }
+    // const isPrivateProp = key => {
+    //   if (key.length > 1) {
+    //     if (key[0] === '_' && key[1] !== '_') {
+    //       return true
+    //     }
+    //     return false
+    //   }
+    //   return false
+    // }
 
-    _.forEach(this, (val, key) => {
-      if (isPrivateProp(key)) {
-        delete this[key]
-      }
-    })
+    // _.forEach(this, (val, key) => {
+    //   if (isPrivateProp(key)) {
+    //     delete this[key]
+    //   }
+    // })
 
     return this
   }
