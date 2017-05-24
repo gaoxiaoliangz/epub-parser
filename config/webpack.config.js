@@ -10,7 +10,7 @@ function resolveApp(relativePath) {
 
 module.exports = {
   entry: {
-    epubParser: [resolveApp('src/epubParser.ts')]
+    epubParser: [resolveApp('src')]
   },
   output: {
     path: resolveApp('build/lib'),
@@ -19,7 +19,8 @@ module.exports = {
     chunkFilename: 'chunk.[id].js',
 
     // editor break point support
-    devtoolModuleFilenameTemplate: '[resource-path]'
+    // make sure the generated path in map file refers to the source file correctly
+    devtoolModuleFilenameTemplate: '../../[resource-path]'
   },
   plugins: [
     // add support for node source map

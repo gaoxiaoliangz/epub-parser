@@ -8,7 +8,11 @@
       "type": "node",
       "request": "launch",
       "name": "启动程序",
-      "program": "${workspaceRoot}/examples/01-read-epub-file/server.js"
+      // "program": "${workspaceRoot}/examples/01-read-epub-file/server.js"
+      "program": "${workspaceRoot}/src/test.js",
+      "outFiles": [
+        "${workspaceRoot}/build/lib/**/*.js"
+      ]
     },
     {
       "type": "node",
@@ -18,7 +22,8 @@
       "restart": true,
       "protocol": "inspector",
       "outFiles": [
-        "${workspaceRoot}/examples/display-book-info/build/**/*.js"
+        "${workspaceRoot}/build/lib/**/*.js"
+        // "${workspaceRoot}/build/examples/display-book-info/build/**/*.js"
       ]
     }
   ]

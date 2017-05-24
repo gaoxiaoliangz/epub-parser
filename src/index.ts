@@ -1,3 +1,3 @@
-import parser from './epub-parser'
+import parser from './epubParser'
 
 export default parser
