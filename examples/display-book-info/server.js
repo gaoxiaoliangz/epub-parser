@@ -1,16 +1,11 @@
 const express = require('express')
 const http = require('http')
 const app = express()
-const epubParser = require('./build/epubParser').default
+const epubParser = require('../../build/lib/epubParser').default
 
 app.use('/', (req, res) => {
   epubParser('../../epubs/zhihu.epub').then(result => {
-    result.sections.forEach((item, index) => {
-      const obj = item.toHtmlObject()
-      if (index > 10) {
-        res.send('ok')
-      }
-    })
+    res.send(JSON.stringify(result.meta))
   })
 })
 
