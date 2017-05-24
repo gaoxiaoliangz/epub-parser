@@ -1,8 +1,8 @@
-import * as fs from 'fs'
-import * as xml2js from 'xml2js'
-import * as _ from 'lodash'
-import * as nodeZip from 'node-zip'
-import * as md5 from 'md5'
+import fs from 'fs'
+import xml2js from 'xml2js'
+import _ from 'lodash'
+import nodeZip from 'node-zip'
+import md5 from 'md5'
 import parseLink from './parseLink'
 import parseSection, { Section } from './parseSection'
 
