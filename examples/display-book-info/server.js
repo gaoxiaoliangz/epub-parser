@@ -1,7 +1,7 @@
 const express = require('express')
 const http = require('http')
 const app = express()
-const epubParser = require('../../lib/index.js').default
+const epubParser = require('./build/epubParser').default
 
 app.use('/', (req, res) => {
   epubParser('../../epubs/zhihu.epub').then(result => {

@@ -16,7 +16,10 @@
       "name": "Attach (Inspector Protocol)",
       "port": 9229,
       "restart": true,
-      "protocol": "inspector"
+      "protocol": "inspector",
+      "outFiles": [
+        "${workspaceRoot}/examples/display-book-info/build/**/*.js"
+      ]
     }
   ]
 }

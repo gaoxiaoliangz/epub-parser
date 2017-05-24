@@ -27,11 +27,6 @@ var reactReduxExternal = {
 }
 
 var config = {
-  externals: {
-    'react': reactExternal,
-    'redux': reduxExternal,
-    'react-redux': reactReduxExternal
-  },
   module: {
     loaders: [
       {
