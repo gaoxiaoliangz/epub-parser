@@ -1,6 +1,6 @@
 {
   "name": "@gxl/epub-parser",
-  "version": "0.5.0",
+  "version": "1.0.0",
   "description": "A powerful yet easy-to-use epub parser",
   "main": "build/lib/epubParser.js",
   "types": "build/types/index.d.ts",
@@ -13,10 +13,7 @@
     "watch:lib": "webpack --config config/webpack.config.js --progress --watch",
     "debug": "nodemon --debug=9229 --inspect src/test.js",
     "test": "jest --no-cache",
-    "watch:test": "npm test -- --watch",
-    "prepubpack": "npm config set registry https://registry.npmjs.org/",
-    "pubpack": "npm publish",
-    "postpubpack": "npm config set registry https://registry.npm.taobao.org"
+    "watch:test": "npm test -- --watch"
   },
   "repository": {
     "type": "git",
