@@ -57,6 +57,23 @@ The output is an object which contains `structure`, `sections`, `info` along wit
 
 `sections` is an array of chapters or sections under chapters, they are referred in `structure`. Each section object contains the raw html string and a few handy methods to help you with you needs. `toMarkdown` convert the current section to markdown object. `toHtmlObject` converts to html object. And a note about `src` and `href`, the `src` and `href` in raw html stay untouched, but the `toHtmlObject` method resolves `src` to base64 string, and alters `href` so that they make sense in the parsed epub. And the parsed `href` is something like `#{sectionId},{hash}`.
 
+### One more thing
+
+It provides some util functions as well. 
+
+They can be used via
+
+```js
+import { parseLink, parseHTML, parseNestedObject, flattenArray } from '@gxl/epub-parser'
+```
+
+* parseLink
+* parseHTML
+* parseNestedObject
+* flattenArray
+
+Docs are coming soon ...
+
 ## How to contribute
 
 * Raise an issue in the issue section.
