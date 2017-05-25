@@ -59,7 +59,7 @@ The output is an object which contains `structure`, `sections`, `info` along wit
 
 ## How to contribute
 
-> Raise an issue in the issue section.
-> PRs are the best.
+* Raise an issue in the issue section.
+* PRs are the best.
 
 ❤️
