@@ -8,6 +8,4 @@ before_install:
 
 node_js:
   - "6"
-  - "5"
-  - "4"
   - "stable"
