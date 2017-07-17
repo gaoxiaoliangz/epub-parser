@@ -2,7 +2,6 @@ import fs from 'fs'
 import xml2js from 'xml2js'
 import _ from 'lodash'
 import nodeZip from 'node-zip'
-import md5 from 'md5'
 import parseLink from './parseLink'
 import parseSection, { Section } from './parseSection'
 
@@ -102,15 +101,36 @@ export class Epub {
     return opfPath
   }
 
-  _genStructure(tocObj) {
+  _getManifest(content) {
+    return _.get(content, ['package', 'manifest', 0, 'item'], [])
+      .map(item => item.$) as any[]
+  }
+
+  _resolveIdFromLink(href) {
+    const { name: tarName } = parseLink(href)
+    const tarItem = _.find(this._manifest, item => {
+      const { name } = parseLink(item.href)
+      return name === tarName
+    })
+    return _.get(tarItem, 'id')
+  }
+
+  _getSpine() {
+    return _.get(this._content, ['package', 'spine', 0, 'itemref'], [])
+      .map(item => {
+        return item.$.idref
+      })
+  }
+
+  _genStructure(tocObj, resolveNodeId = false) {
     const rootNavPoints = _.get(tocObj, ['ncx', 'navMap', '0', 'navPoint'], [])
 
     const parseNavPoint = (navPoint) => {
       // link to section
-      const link = _.get(navPoint, ['content', '0', '$', 'src'], '')
+      const path = _.get(navPoint, ['content', '0', '$', 'src'], '')
       const name = _.get(navPoint, ['navLabel', '0', 'text', '0'])
       const playOrder = _.get(navPoint, ['$', 'playOrder']) as string
-      const { hash } = parseLink(link)
+      const { hash: nodeId } = parseLink(path)
       let children = navPoint.navPoint
 
       if (children) {
@@ -118,12 +138,13 @@ export class Epub {
         children = parseNavPoints(children)
       }
 
-      const sectionId = this._resolveIdFromLink(link)
+      const sectionId = this._resolveIdFromLink(path)
 
       return {
         name,
         sectionId,
-        hash,
+        nodeId,
+        path,
         playOrder,
         children
       }
@@ -138,46 +159,27 @@ export class Epub {
     return parseNavPoints(rootNavPoints)
   }
 
-  _getManifest(content) {
-    return _.get(content, ['package', 'manifest', 0, 'item'], [])
-      .map(item => item.$) as any[]
-  }
-
-  _resolveIdFromLink(href) {
-    const { name: tarName } = parseLink(href)
-    const tarItem = _.find(this._manifest, item => {
-      const { name } = parseLink(item.href)
-      return name === tarName
-    })
-    const id = _.get(tarItem, 'id', '')
-    if (id) {
-      return md5(id)
-    }
-    return null
-  }
-
-  _getSpine() {
-    return _.get(this._content, ['package', 'spine', 0, 'itemref'], [])
-      .map(item => {
-        return item.$.idref
-      })
-  }
-
-  _resolveSectionsFromSpine() {
+  _resolveSectionsFromSpine(expand = false) {
     // no chain
     return _.map(_.union(this._spine), id => {
       const path = _.find(this._manifest, { id }).href
       const html = this.resolve(path).asText()
-      return parseSection({
+      const section = parseSection({
         id,
         htmlString: html,
         resourceResolver: this.resolve.bind(this),
         idResolver: this._resolveIdFromLink.bind(this)
       })
+      if (expand) {
+        return _.assign(section, {
+          htmlObject: section.toHtmlObject()
+        })
+      }
+      return section
     })
   }
 
-  async parse() {
+  async parse(expand = false) {
     const opfPath = await this._getOpfPath()
     this._root = determineRoot(opfPath)
 
@@ -194,42 +196,27 @@ export class Epub {
     this._toc = toc
     this._spine = this._getSpine()
     this._metadata = metadata
-    this.structure = this._genStructure(toc)
     this.info = parseMetadata(metadata)
-    this.sections = this._resolveSectionsFromSpine()
-
-    // remove private member vars
-    // const isPrivateProp = key => {
-    //   if (key.length > 1) {
-    //     if (key[0] === '_' && key[1] !== '_') {
-    //       return true
-    //     }
-    //     return false
-    //   }
-    //   return false
-    // }
-
-    // _.forEach(this, (val, key) => {
-    //   if (isPrivateProp(key)) {
-    //     delete this[key]
-    //   }
-    // })
+    this.sections = this._resolveSectionsFromSpine(expand)
+    this.structure = this._genStructure(toc)
 
     return this
   }
 }
 
 export interface ParserOptions {
-  type?: 'binaryString' | 'path' | 'buffer'
+  type?: 'binaryString' | 'path' | 'buffer',
+  expand?: boolean
 }
 export default function parserWrapper(target: string | Buffer, options: ParserOptions = {}) {
   // seems 260 is the length limit of old windows standard
   // so path length is not used to determine whether it's path or binary string
   // the downside here is that if the filepath is incorrect, it will be treated as binary string by default
   // but it can use options to define the target type
+  const { type, expand } = options
   let _target = target
-  if (options.type === 'path' || (typeof target === 'string' && fs.existsSync(target))) {
+  if (type === 'path' || (typeof target === 'string' && fs.existsSync(target))) {
     _target = fs.readFileSync(target as string, 'binary')
   }
-  return new Epub(_target).parse()
+  return new Epub(_target).parse(expand)
 }

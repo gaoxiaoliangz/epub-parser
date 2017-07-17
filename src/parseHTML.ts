@@ -8,10 +8,21 @@ const OMITTED_TAGS = ['head', 'input', 'textarea', 'script', 'style', 'svg']
 const UNWRAP_TAGS = ['body', 'html', 'div', 'span']
 const PICKED_ATTRS = ['href', 'src', 'id']
 
+const parseRawHTML = HTMLString => {
+  return jsdom
+    .jsdom(HTMLString, {
+      features: {
+        FetchExternalResources: [],
+        ProcessExternalResources: false
+      }
+    })
+    .documentElement
+}
+
 /**
  * recursivelyReadParent
  * @param node 
- * @param callback runs the matching logic return the new node if true, if not return false, and the loop continues
+ * @param callback invoke every time a parent node is read, return truthy value to stop the reading process
  * @param final callback when reaching the root
  */
 const recursivelyReadParent = (node, callback, final?) => {
@@ -31,17 +42,6 @@ const recursivelyReadParent = (node, callback, final?) => {
     }
   }
   return _read(node)
-}
-
-const parseRawHTML = HTMLString => {
-  return jsdom
-    .jsdom(HTMLString, {
-      features: {
-        FetchExternalResources: [],
-        ProcessExternalResources: false
-      }
-    })
-    .documentElement
 }
 
 export interface ParseHTMLObjectConfig {
@@ -68,22 +68,11 @@ const parseHTMLObject = (HTMLString, config: ParseHTMLObjectConfig = {}) => {
           return null
         }
 
-        if (UNWRAP_TAGS.indexOf(tag) !== -1) {
-          const flatten = _.flattenDeep(children)
-          return flatten.length === 1 ? flatten[0] : flatten
+        const flatChildren = children && _.flattenDeep(children)
+
+        if (UNWRAP_TAGS.indexOf(tag) !== -1 && flatChildren) {
+          return flatChildren.length === 1 ? flatChildren[0] : flatChildren
         }
-
-        const flatChildren = _.flattenDeep(children)
-        // todo: join text
-        // const childrenAllString = flatChildren.every(child => typeof child === 'string')
-        // const joinedString = flatChildren.join(' ')
-
-        // if (childrenAllString) {
-        //   return {
-        //     tag,
-        //     children: joinedString ? [joinedString] : undefined
-        //   }
-        // }
 
         PICKED_ATTRS.forEach(attr => {
           let attrVal = node.getAttribute(attr) || undefined
@@ -105,7 +94,6 @@ const parseHTMLObject = (HTMLString, config: ParseHTMLObjectConfig = {}) => {
 
         const makeTextObject = () => {
           return {
-            parentTag: node.parentNode.tagName && node.parentNode.tagName.toLowerCase(),
             type: 3,
             text
           }
@@ -130,23 +118,9 @@ const parseHTMLObject = (HTMLString, config: ParseHTMLObjectConfig = {}) => {
     postFilter(node) {
       return !_.isEmpty(node)
     }
-  }) as ParsedNode[]
+  }) as HtmlNode[]
 
-  // post parse
-  return parseNestedObject(parsed[0], {
-    childrenKey: 'children',
-    parser(object, children) {
-      if (object.children) {
-        return {
-          ...object,
-          ...{
-            children: !_.isEmpty(children) ? children : undefined
-          }
-        }
-      }
-      return object
-    }
-  })
+  return _.flattenDeep(parsed)
 }
 
 export default parseHTMLObject

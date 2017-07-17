@@ -70,7 +70,6 @@ import { parseLink, parseHTML, parseNestedObject, flattenArray } from '@gxl/epub
 * parseLink
 * parseHTML
 * parseNestedObject
-* flattenArray
 
 Docs are coming soon ...
 

@@ -2,13 +2,13 @@ interface GeneralObject {
   [key: string]: any
 }
 
-interface ParsedNode {
+interface HtmlNode {
   tag?: string
   type: 1 | 3
   text?: string
-  children?: ParsedNode[]
+  children?: HtmlNode[]
   attrs: {
-    tagId: string
+    id: string
     href: string
     src: string
   }
