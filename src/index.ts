@@ -1,12 +1,11 @@
 import parser from './epubParser'
 import parseLink from './parseLink'
 import parseHTML from './parseHTML'
-import { parseNestedObject, flattenArray } from './utils'
+import { parseNestedObject } from './utils'
 
 export {
   parseLink,
   parseHTML,
-  parseNestedObject,
-  flattenArray
+  parseNestedObject
 }
 export default parser

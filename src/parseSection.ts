@@ -19,23 +19,23 @@ export type ParseSectionConfig = {
 export class Section {
   id: string
   htmlString: string
-  private _resourceResolver: (path: string) => any
-  private _idResolver: (link: string) => string
+  private _resourceResolver?: (path: string) => any
+  private _idResolver?: (link: string) => string
 
   constructor({ id, htmlString, resourceResolver, idResolver }: ParseSectionConfig) {
-    this.id = md5(id)
+    this.id = id
     this.htmlString = htmlString
     this._resourceResolver = resourceResolver
     this._idResolver = idResolver
   }
 
-  toMarkdown() {
+  toMarkdown?() {
     return toMarkdown(this.htmlString, {
       converters: [mdConverters.h, mdConverters.span, mdConverters.div, mdConverters.img, mdConverters.a]
     })
   }
 
-  toHtmlObject() {
+  toHtmlObject?() {
     return parseHTML(this.htmlString, {
       resolveHref: (href) => {
         if (isInternalUri(href)) {
