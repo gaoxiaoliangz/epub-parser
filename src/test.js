@@ -10,11 +10,11 @@ function resolveApp(relativePath) {
 
 console.time('parse')
 epubParser(resolveApp('epubs/zhihu.epub'), {
-  expand: true
+  expand: false
 }).then(result => {
   console.timeEnd('parse')
   result.sections.forEach((item, index) => {
-    const obj = item.toHtmlObject()
+    const obj = item.toHtmlObjects()
     const md = item.toMarkdown()
   })
 })

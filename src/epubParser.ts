@@ -164,18 +164,14 @@ export class Epub {
     return _.map(_.union(this._spine), id => {
       const path = _.find(this._manifest, { id }).href
       const html = this.resolve(path).asText()
-      const section = parseSection({
+
+      return parseSection({
         id,
         htmlString: html,
         resourceResolver: this.resolve.bind(this),
-        idResolver: this._resolveIdFromLink.bind(this)
+        idResolver: this._resolveIdFromLink.bind(this),
+        expand
       })
-      if (expand) {
-        return _.assign(section, {
-          htmlObject: section.toHtmlObject()
-        })
-      }
-      return section
     })
   }
 
