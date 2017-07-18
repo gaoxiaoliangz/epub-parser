@@ -1,6 +1,6 @@
 {
   "name": "@gxl/epub-parser",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A powerful yet easy-to-use epub parser",
   "main": "build/lib/epubParser.js",
   "types": "build/types/index.d.ts",
@@ -38,7 +38,7 @@
     "lodash": "^4.17.2",
     "node-zip": "^1.1.1",
     "to-markdown": "^3.0.3",
-    "typescript": "^2.3.3",
+    "typescript": "2.3.4",
     "xml2js": "^0.4.17"
   },
   "devDependencies": {

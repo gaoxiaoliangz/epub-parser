@@ -55,7 +55,7 @@ The output is an object which contains `structure`, `sections`, `info` along wit
 
 `structure` is the parsed `toc` of epub file, they contain information about how the book is constructed.
 
-`sections` is an array of chapters or sections under chapters, they are referred in `structure`. Each section object contains the raw html string and a few handy methods to help you with you needs. `toMarkdown` convert the current section to markdown object. `toHtmlObject` converts to html object. And a note about `src` and `href`, the `src` and `href` in raw html stay untouched, but the `toHtmlObject` method resolves `src` to base64 string, and alters `href` so that they make sense in the parsed epub. And the parsed `href` is something like `#{sectionId},{hash}`.
+`sections` is an array of chapters or sections under chapters, they are referred in `structure`. Each section object contains the raw html string and a few handy methods to help you with you needs. `toMarkdown` convert the current section to markdown object. `toHtmlObjects` converts to html object. And a note about `src` and `href`, the `src` and `href` in raw html stay untouched, but the `toHtmlObjects` method resolves `src` to base64 string, and alters `href` so that they make sense in the parsed epub. And the parsed `href` is something like `#{sectionId},{hash}`.
 
 ### One more thing
 

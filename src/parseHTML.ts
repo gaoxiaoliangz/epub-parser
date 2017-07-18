@@ -118,7 +118,7 @@ const parseHTMLObject = (HTMLString, config: ParseHTMLObjectConfig = {}) => {
     postFilter(node) {
       return !_.isEmpty(node)
     }
-  }) as HtmlNode[]
+  }) as HtmlNodeObject[]
 
   return _.flattenDeep(parsed)
 }
