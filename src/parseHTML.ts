@@ -54,7 +54,7 @@ const parseHTMLObject = (HTMLString, config: ParseHTMLObjectConfig = {}) => {
   const { resolveHref, resolveSrc } = config
 
   // initial parse
-  const parsed = parseNestedObject(rootNode, {
+  return parseNestedObject(rootNode, {
     childrenKey: 'childNodes',
     preFilter(node) {
       return node.nodeType === 1 || node.nodeType === 3
@@ -68,10 +68,8 @@ const parseHTMLObject = (HTMLString, config: ParseHTMLObjectConfig = {}) => {
           return null
         }
 
-        const flatChildren = children && _.flattenDeep(children)
-
-        if (UNWRAP_TAGS.indexOf(tag) !== -1 && flatChildren) {
-          return flatChildren.length === 1 ? flatChildren[0] : flatChildren
+        if (UNWRAP_TAGS.indexOf(tag) !== -1 && children) {
+          return children.length === 1 ? children[0] : children
         }
 
         PICKED_ATTRS.forEach(attr => {
@@ -85,7 +83,7 @@ const parseHTMLObject = (HTMLString, config: ParseHTMLObjectConfig = {}) => {
           attrs[attr] = attrVal
         })
 
-        return { tag, type: 1, children: flatChildren, attrs }
+        return { tag, type: 1, children, attrs }
       } else {
         const text = node.textContent.trim()
         if (!text) {
@@ -119,8 +117,6 @@ const parseHTMLObject = (HTMLString, config: ParseHTMLObjectConfig = {}) => {
       return !_.isEmpty(node)
     }
   }) as HtmlNodeObject[]
-
-  return _.flattenDeep(parsed)
 }
 
 export default parseHTMLObject

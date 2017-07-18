@@ -1,21 +1,5 @@
 import _ from 'lodash'
 
-// export function flattenArray(arrayOfNestedObj, childrenName = 'children') {
-//   const list = []
-
-//   const push = infoList => {
-//     infoList.forEach(item => {
-//       list.push(_.omit(item, childrenName))
-//       if (item[childrenName]) {
-//         push(item[childrenName])
-//       }
-//     })
-//   }
-
-//   push(arrayOfNestedObj)
-//   return list
-// }
-
 export interface ParseNestedObjectConfig {
   preFilter?: (node) => boolean
   postFilter?: (node) => boolean
@@ -43,7 +27,7 @@ const parseNestedObjectWrapper = (_rootObject: Object | Object[], config: ParseN
     return []
   }
 
-  const parseNestedObject = (rootObject: Object | Object[]): any[] => {
+  const parseNestedObject = (rootObject: any | any[]): any[] => {
     const makeArray = () => {
       if (Array.isArray(rootObject) || _.isArrayLikeObject(rootObject) || _.isArrayLike(rootObject)) {
         return rootObject
@@ -86,7 +70,7 @@ const parseNestedObjectWrapper = (_rootObject: Object | Object[], config: ParseN
     return result
   }
 
-  return parseNestedObject(_rootObject)
+  return _.flattenDeep(parseNestedObject(_rootObject))
 }
 
 export const parseNestedObject = parseNestedObjectWrapper
