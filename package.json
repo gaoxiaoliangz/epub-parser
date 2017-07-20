@@ -1,6 +1,6 @@
 {
   "name": "@gxl/epub-parser",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A powerful yet easy-to-use epub parser",
   "main": "build/lib/epubParser.js",
   "types": "build/types/index.d.ts",
