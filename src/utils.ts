@@ -45,7 +45,9 @@ const parseNestedObjectWrapper = (_rootObject: Object | Object[], config: ParseN
     result = _.map(result, (object, index) => {
       if (object[childrenKey]) {
         const parsedChildren = parseNestedObject(object[childrenKey])
-        const children = _.isEmpty(parsedChildren) ? undefined : parsedChildren
+        // in parseHTML, if a tag is in unwrap list, like <span>aaa<span>bbb</span></span>
+        // the result needs to be flatten
+        const children = _.isEmpty(parsedChildren) ? undefined : _.flattenDeep(parsedChildren)
         if (parser) {
           return parser(object, children)
         }
