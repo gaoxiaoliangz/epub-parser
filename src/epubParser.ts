@@ -82,7 +82,7 @@ export class Epub {
     } else {
       _path = this._root + path
     }
-    const file = this._zip.file(_path)
+    const file = this._zip.file(decodeURI(_path))
     if (file) {
       return file
     } else {
