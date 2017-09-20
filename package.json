@@ -1,16 +1,17 @@
 {
   "name": "@gxl/epub-parser",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A powerful yet easy-to-use epub parser",
   "main": "build/lib/epubParser.js",
   "types": "build/types/index.d.ts",
   "scripts": {
     "build:types": "tsc --outDir build/js --declaration --declarationDir build/types",
     "prebuild": "npm run clean",
-    "build": "webpack --config config/webpack.config.js --progress",
+    "build": "npm run webpack -- --config config/webpack.config.js --progress",
     "postbuild": "npm run build:types",
     "clean": "rimraf build",
-    "watch:lib": "webpack --config config/webpack.config.js --progress --watch",
+    "webpack": "webpack",
+    "watch:lib": "npm run webpack -- --config config/webpack.config.js --progress --watch",
     "debug": "nodemon --debug=9229 --inspect src/test.js",
     "test": "jest --no-cache",
     "watch:test": "npm test -- --watch"
