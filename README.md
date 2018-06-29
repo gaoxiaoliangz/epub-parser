@@ -17,7 +17,7 @@ npm install @gxl/epub-parser --save
 or if you prefer yarn
 
 ``` bash
-yarn install @gxl/epub-parser
+yarn add @gxl/epub-parser
 ```
 
 ## Usage
