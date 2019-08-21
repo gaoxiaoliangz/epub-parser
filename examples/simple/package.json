@@ -1,0 +1,10 @@
+{
+  "name": "simple",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "author": "gaoxiaoliangz",
+  "license": "ISC"
+}
