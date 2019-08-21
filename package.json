@@ -7,11 +7,10 @@
   "scripts": {
     "build:types": "tsc --outDir build/js --declaration --declarationDir build/types",
     "prebuild": "npm run clean",
-    "build": "npm run webpack -- --config config/webpack.config.js --progress",
+    "build": "",
     "postbuild": "npm run build:types",
     "clean": "rimraf build",
     "webpack": "webpack",
-    "watch:lib": "npm run webpack -- --config config/webpack.config.js --progress --watch",
     "debug": "nodemon --debug=9229 --inspect src/test.js",
     "test": "jest --no-cache",
     "watch:test": "npm test -- --watch"
@@ -86,28 +85,5 @@
     "vrsource-tslint-rules": "^5.1.0",
     "webpack": "^2.6.0",
     "webpack-node-externals": "^1.6.0"
-  },
-  "jest": {
-    "transform": {
-      ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
-    },
-    "setupFiles": [
-      "<rootDir>/config/polyfills.js"
-    ],
-    "testPathIgnorePatterns": [
-      "<rootDir>[/\\\\](build|docs|node_modules|scripts)[/\\\\]"
-    ],
-    "collectCoverageFrom": [
-      "src/**/*.{ts,tsx}"
-    ],
-    "testRegex": "(/__test__/.*|\\.(test|spec))\\.(ts|tsx)$",
-    "modulePaths": [
-      "src"
-    ],
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js"
-    ]
   }
 }
