@@ -1,8 +1,8 @@
 {
   "name": "@gxl/epub-parser",
-  "version": "1.0.6",
+  "version": "2.0.0",
   "description": "A powerful yet easy-to-use epub parser",
-  "main": "lib/epubParser.js",
+  "main": "lib/index.js",
   "scripts": {
     "prebuild": "yarn clean",
     "build": "tsc",
