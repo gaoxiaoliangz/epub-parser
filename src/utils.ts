@@ -1,33 +1,33 @@
 import _ from 'lodash'
 
-export interface ParseNestedObjectConfig {
+export interface TraverseNestedObject {
   preFilter?: (node) => boolean
   postFilter?: (node) => boolean
 
-  // children must be returned from parser
+  // children must be returned from transformer
   // or it may not work as expected
-  parser?: (node, children) => any
-  finalParser?: (node) => any
+  transformer?: (node, children) => any
+  finalTransformer?: (node) => any
 
   childrenKey: string
 }
 
 /**
- * parseNestedObject
- * a note about config.parser
- * `children` is a recursively parsed object and should be returned for parser to take effect
- * objects without `children` will be parsed by finalParser
- * @param _rootObject 
- * @param config 
+ * traverseNestedObject
+ * a note about config.transformer
+ * `children` is a recursively transformed object and should be returned for transformer to take effect
+ * objects without `children` will be transformed by finalTransformer
+ * @param _rootObject
+ * @param config
  */
-const parseNestedObjectWrapper = (_rootObject: Object | Object[], config: ParseNestedObjectConfig) => {
-  const { childrenKey, parser, preFilter, postFilter, finalParser } = config
+export const traverseNestedObject = (_rootObject: Object | Object[], config: TraverseNestedObject) => {
+  const { childrenKey, transformer, preFilter, postFilter, finalTransformer } = config
 
   if (!_rootObject) {
     return []
   }
 
-  const parseNestedObject = (rootObject: any | any[]): any[] => {
+  const traverse = (rootObject: any | any[]): any[] => {
     const makeArray = () => {
       if (Array.isArray(rootObject) || _.isArrayLikeObject(rootObject) || _.isArrayLike(rootObject)) {
         return rootObject
@@ -44,23 +44,23 @@ const parseNestedObjectWrapper = (_rootObject: Object | Object[], config: ParseN
 
     result = _.map(result, (object, index) => {
       if (object[childrenKey]) {
-        const parsedChildren = parseNestedObject(object[childrenKey])
+        const transformedChildren = traverse(object[childrenKey])
         // in parseHTML, if a tag is in unwrap list, like <span>aaa<span>bbb</span></span>
         // the result needs to be flatten
-        const children = _.isEmpty(parsedChildren) ? undefined : _.flattenDeep(parsedChildren)
-        if (parser) {
-          return parser(object, children)
+        const children = _.isEmpty(transformedChildren) ? undefined : _.flattenDeep(transformedChildren)
+        if (transformer) {
+          return transformer(object, children)
         }
         return {
           ...object,
           ...{
-            [childrenKey]: children
-          }
+            [childrenKey]: children,
+          },
         }
       }
 
-      if (finalParser) {
-        return finalParser(object)
+      if (finalTransformer) {
+        return finalTransformer(object)
       }
       return object
     })
@@ -72,7 +72,5 @@ const parseNestedObjectWrapper = (_rootObject: Object | Object[], config: ParseN
     return result
   }
 
-  return _.flattenDeep(parseNestedObject(_rootObject))
+  return _.flattenDeep(traverse(_rootObject))
 }
-
-export const parseNestedObject = parseNestedObjectWrapper

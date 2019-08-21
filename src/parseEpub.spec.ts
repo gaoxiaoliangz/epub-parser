@@ -1,5 +1,4 @@
-import expect from 'expect.js'
-import parser from '../epubParser'
+import parser from './parseEpub'
 import _ from 'lodash'
 import * as path from 'path'
 
@@ -8,17 +7,16 @@ const filesToBeTested = ['file-1', 'file-2', 'file-3', 'file-4']
 
 const testFile = filename => {
   describe(`parser 测试 ${filename}.epub`, () => {
-    const fileContent = parser(path.join(baseDir, `epubs/${filename}.epub`), { type: 'path' }).catch(error => {
+    const fileContent = parser(path.join(baseDir, `fixtures/${filename}.epub`), { type: 'path' }).catch(error => {
       console.log(error)
     })
 
-    it('Result should have keys', done => {
-      fileContent
-        .then(result => {
-          const keys = _.keys(result)
-          expect(keys.length).to.not.equal(0)
-          done()
-        })
+    test('Result should have keys', done => {
+      fileContent.then(result => {
+        const keys = _.keys(result)
+        expect(keys.length).not.toBe(0)
+        done()
+      })
     })
 
     // it('key 分别为: flesh, nav, meta', done => {

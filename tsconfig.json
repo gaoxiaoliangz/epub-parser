@@ -1,16 +1,23 @@
 {
-  "compileOnSave": true,
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "target": "es2015",
-    "jsx": "react",
+    "target": "es5",
+    "lib": [
+      "es6",
+      "dom"
+    ],
+    "module": "commonjs",
+    "moduleResolution": "node",
     "experimentalDecorators": true,
-    "moduleResolution": "node"
+    "emitDecoratorMetadata": true,
+    "outDir": "lib",
+    "sourceMap": true,
+    "declaration": true,
+    "allowJs": false,
+    "jsx": "react",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true
   },
-  "exclude": [
-    "node_modules",
-    "examples",
-    "types",
-    "test"
+  "include": [
+    "src"
   ]
 }
