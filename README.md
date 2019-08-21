@@ -11,29 +11,31 @@ As it is written in TypeScript, types are already included in the package.
 
 ## Install
 
-``` bash
+```bash
 npm install @gxl/epub-parser --save
 ```
+
 or if you prefer yarn
 
-``` bash
+```bash
 yarn add @gxl/epub-parser
 ```
 
 ## Usage
 
 ```js
-import parser from '@gxl/epub-parser'
-// if you use `require` don't forget to add `.default`
-// const parser = require('simple-epub-parser').default
+import { parseEpub } from '@gxl/epub-parser'
 
 console.log('epub content:', parser(binaryData))
-console.log('epub content:', parser('/path/to/file.epub', {
-  type: 'path'
-}))
+console.log(
+  'epub content:',
+  parser('/path/to/file.epub', {
+    type: 'path',
+  }),
+)
 ```
 
-### parser(target: string | buffer, options?: object): EpubObject
+### parseEpub(target: string | buffer, options?: object): EpubObject
 
 #### target
 
@@ -51,31 +53,18 @@ It forces the parser to treat supplied target as the defined type, if not define
 
 #### EpubObject
 
-The output is an object which contains `structure`, `sections`, `info` along with some other properties that deals with the epub file. They start with `_`. I don't recommend using these properties, since they are subscribed to change. They are where they are simply because JavaScript don't have native private member variable support, and sometimes they are helpful for debugging.
+The output is an object which contains `structure`, `sections`, `info`(private property names start with `_`. I don't recommend using them, since they are subscribed to change).
 
 `structure` is the parsed `toc` of epub file, they contain information about how the book is constructed.
 
-`sections` is an array of chapters or sections under chapters, they are referred in `structure`. Each section object contains the raw html string and a few handy methods to help you with you needs. `toMarkdown` convert the current section to markdown object. `toHtmlObjects` converts to html object. And a note about `src` and `href`, the `src` and `href` in raw html stay untouched, but the `toHtmlObjects` method resolves `src` to base64 string, and alters `href` so that they make sense in the parsed epub. And the parsed `href` is something like `#{sectionId},{hash}`.
+`sections` is an array of chapters or sections under chapters, they are referred in `structure`. Each section object contains the raw html string and a few handy methods.
 
-### One more thing
-
-It provides some util functions as well. 
-
-They can be used via
-
-```js
-import { parseLink, parseHTML, parseNestedObject, flattenArray } from '@gxl/epub-parser'
-```
-
-* parseLink
-* parseHTML
-* parseNestedObject
-
-Docs are coming soon ...
+- `Section.prototype.toMarkdown`: convert to markdown object.
+- `Section.prototype.toHtmlObjects`: convert to html object. And a note about `src` and `href`, the `src` and `href` in raw html stay untouched, but the `toHtmlObjects` method resolves `src` to base64 string, and alters `href` so that they make sense in the parsed epub. And the parsed `href` is something like `#{sectionId},{hash}`.
 
 ## How to contribute
 
-* Raise an issue in the issue section.
-* PRs are the best.
+- Raise an issue in the issue section.
+- PRs are the best.
 
 ❤️
