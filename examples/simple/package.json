@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "node main.js"
+    "start": "node main.js",
+    "debug": "node --inspect main.js"
   },
   "author": "gaoxiaoliangz",
   "license": "ISC"
