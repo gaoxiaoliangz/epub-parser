@@ -1,5 +1,4 @@
-import expect from 'expect.js'
-import parser from '../epubParser'
+import parser from './epubParser'
 import _ from 'lodash'
 import * as path from 'path'
 
@@ -13,12 +12,11 @@ const testFile = filename => {
     })
 
     it('Result should have keys', done => {
-      fileContent
-        .then(result => {
-          const keys = _.keys(result)
-          expect(keys.length).to.not.equal(0)
-          done()
-        })
+      fileContent.then(result => {
+        const keys = _.keys(result)
+        expect(keys.length).not.toBe(0)
+        done()
+      })
     })
 
     // it('key 分别为: flesh, nav, meta', done => {
