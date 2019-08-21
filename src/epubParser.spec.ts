@@ -7,11 +7,11 @@ const filesToBeTested = ['file-1', 'file-2', 'file-3', 'file-4']
 
 const testFile = filename => {
   describe(`parser 测试 ${filename}.epub`, () => {
-    const fileContent = parser(path.join(baseDir, `epubs/${filename}.epub`), { type: 'path' }).catch(error => {
+    const fileContent = parser(path.join(baseDir, `fixtures/${filename}.epub`), { type: 'path' }).catch(error => {
       console.log(error)
     })
 
-    it('Result should have keys', done => {
+    test('Result should have keys', done => {
       fileContent.then(result => {
         const keys = _.keys(result)
         expect(keys.length).not.toBe(0)

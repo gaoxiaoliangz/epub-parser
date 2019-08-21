@@ -1,7 +1,7 @@
 import parseHTML from './parseHTML'
 import _ from 'lodash'
 
-describe('parseHTML', () => {
+describe('parseHTML1', () => {
   it('unwrap tag in unwrap tag situation', () => {
     const result = parseHTML(`
       <p class="calibre8"><span class="blue1">李剑波</span><sup class="calibre10"><a id="note21" href="../Text/part0006_split_001.html#note21n">[21]</a></sup><span class="calibre9" style="text-decoration:underline">用他的创业经历告诉你：<span class="skycolor">你的创业方向离不开你决定创业那一刻之前的人生积累，尤其是你的职业生涯的积累。</span></span></p>

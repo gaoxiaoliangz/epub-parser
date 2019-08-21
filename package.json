@@ -7,7 +7,9 @@
     "prebuild": "yarn clean",
     "build": "tsc",
     "clean": "rimraf lib",
-    "test": "jest"
+    "test": "jest",
+    "test:debug": "node --inspect-brk -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test:debug:win": "node --inspect-brk -r ts-node/register ./node_modules/jest/bin/jest.js --runInBand"
   },
   "repository": {
     "type": "git",
@@ -38,6 +40,7 @@
   "devDependencies": {
     "@types/express": "^4.17.1",
     "@types/jest": "^24.0.18",
+    "@types/jsdom": "^12.2.4",
     "@types/lodash": "^4.14.137",
     "@types/node": "^12.7.2",
     "@types/xml2js": "^0.4.4",
@@ -48,6 +51,7 @@
     "rimraf": "^3.0.0",
     "source-map-support": "^0.5.13",
     "ts-jest": "^24.0.2",
+    "ts-node": "^8.3.0",
     "tslint": "^5.19.0",
     "vrsource-tslint-rules": "^6.0.0"
   }
