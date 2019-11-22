@@ -3,11 +3,14 @@ import _ from 'lodash'
 import * as path from 'path'
 
 const baseDir = process.cwd()
-const filesToBeTested = ['file-1', 'file-2', 'file-3', 'file-4']
+const filesToBeTested = ['file-1', 'file-2', 'file-3', 'file-4', 'file-1-no-toc']
 
 const testFile = filename => {
   describe(`parser 测试 ${filename}.epub`, () => {
-    const fileContent = parser(path.join(baseDir, `fixtures/${filename}.epub`), { type: 'path' }).catch(error => {
+    const fileContent = parser(path.join(baseDir, `fixtures/${filename}.epub`), {
+      type: 'path',
+      expand: true
+    }).catch(error => {
       console.log(error)
     })
 

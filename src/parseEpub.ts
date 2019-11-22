@@ -181,20 +181,26 @@ export class Epub {
 
     const content = await this._resolveXMLAsJsObject('/' + opfPath)
     const manifest = this._getManifest(content)
-    const tocID = _.get(content, ['package', 'spine', 0, '$', 'toc'], '')
-    const tocPath = _.find(manifest, { id: tocID }).href
-    const toc = await this._resolveXMLAsJsObject(tocPath)
     const metadata = _.get(content, ['package', 'metadata'], [])
+    const tocID = _.get(content, ['package', 'spine', 0, '$', 'toc'], '')
+
+    // https://github.com/gaoxiaoliangz/epub-parser/issues/13
+    // https://www.w3.org/publishing/epub32/epub-packages.html#sec-spine-elem
+    // TOC is optional
+    if (tocID) {
+      const tocPath = _.find(manifest, { id: tocID }).href
+      const toc = await this._resolveXMLAsJsObject(tocPath)
+      this._toc = toc
+      this.structure = this._genStructure(toc)
+    }
 
     this._manifest = manifest
     this._content = content
     this._opfPath = opfPath
-    this._toc = toc
     this._spine = this._getSpine()
     this._metadata = metadata
     this.info = parseMetadata(metadata)
     this.sections = this._resolveSectionsFromSpine(expand)
-    this.structure = this._genStructure(toc)
 
     return this
   }
