@@ -26,10 +26,10 @@ yarn add @gxl/epub-parser
 ```js
 import { parseEpub } from '@gxl/epub-parser'
 
-console.log('epub content:', parser(binaryData))
+console.log('epub content:', parseEpub(binaryData))
 console.log(
   'epub content:',
-  parser('/path/to/file.epub', {
+  parseEpub('/path/to/file.epub', {
     type: 'path',
   }),
 )
