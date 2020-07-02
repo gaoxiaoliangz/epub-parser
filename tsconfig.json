@@ -15,7 +15,9 @@
     "allowJs": false,
     "jsx": "react",
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "preserveWatchOutput": true,
+    "strict": true
   },
   "include": [
     "src"

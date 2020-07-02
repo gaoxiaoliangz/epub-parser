@@ -1,13 +1,14 @@
 import _ from 'lodash'
+import { GeneralObject } from './types'
 
 export interface TraverseNestedObject {
-  preFilter?: (node) => boolean
-  postFilter?: (node) => boolean
+  preFilter?: (node: GeneralObject) => boolean
+  postFilter?: (node: GeneralObject) => boolean
 
   // children must be returned from transformer
   // or it may not work as expected
-  transformer?: (node, children) => any
-  finalTransformer?: (node) => any
+  transformer?: (node: GeneralObject, children?: GeneralObject[]) => any
+  finalTransformer?: (node: GeneralObject) => any
 
   childrenKey: string
 }

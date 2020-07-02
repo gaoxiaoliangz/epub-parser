@@ -6,6 +6,7 @@
   "scripts": {
     "prebuild": "yarn clean",
     "build": "tsc",
+    "watch": "tsc --watch",
     "clean": "rimraf lib",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,md,css,scss}\"",
     "test": "jest",
@@ -36,7 +37,6 @@
     "lodash": "^4.17.15",
     "node-zip": "^1.1.1",
     "to-markdown": "^3.1.1",
-    "typescript": "^3.5.3",
     "xml2js": "^0.4.19"
   },
   "devDependencies": {
@@ -56,6 +56,7 @@
     "ts-jest": "^24.0.2",
     "ts-node": "^8.3.0",
     "tslint": "^5.19.0",
+    "typescript": "^3.9.6",
     "vrsource-tslint-rules": "^6.0.0"
   }
 }

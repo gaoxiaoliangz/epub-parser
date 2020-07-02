@@ -1,6 +1,6 @@
 import parseLink from './parseLink'
 
-export const resolveInlineNavHref = (href) => {
+export const resolveInlineNavHref = (href: string) => {
   if (href && href.indexOf('http://') === -1) {
     const parsed = parseLink(href)
 
@@ -17,7 +17,7 @@ export const resolveInlineNavHref = (href) => {
 export const h = {
   filter: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
 
-  replacement: function (innerHTML, node: HTMLElement) {
+  replacement: function (innerHTML: string, node: HTMLElement) {
     let hLevel = node.tagName.charAt(1) as any
     let hPrefix = ''
 
@@ -41,7 +41,7 @@ export const h = {
 export const span = {
   filter: ['span'],
 
-  replacement: function (innerHTML, node) {
+  replacement: function (innerHTML: string) {
     return innerHTML
   },
 }
@@ -49,16 +49,16 @@ export const span = {
 export const a = {
   filter: ['a'],
 
-  replacement: function (innerHTML, node: HTMLEmbedElement) {
+  replacement: function (innerHTML: string, node: HTMLEmbedElement) {
     const href = node.getAttribute('href')
-    return `\n[${innerHTML}](${resolveInlineNavHref(href)})\n\n`
+    return `\n[${innerHTML}](${resolveInlineNavHref(href!)})\n\n`
   },
 }
 
 export const div = {
   filter: ['div'],
 
-  replacement: function (innerHTML, node) {
+  replacement: function (innerHTML: string) {
     return `\n${innerHTML}\n\n`
   },
 }
@@ -66,7 +66,7 @@ export const div = {
 export const img = {
   filter: ['img'],
 
-  replacement: function (innerHTML, node) {
-    return `\n[图]\n\n`
+  replacement: function (innerHTML: string) {
+    return `\n[PIC]\n\n`
   },
 }

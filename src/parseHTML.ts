@@ -1,6 +1,7 @@
 import { JSDOM } from 'jsdom'
 import _ from 'lodash'
 import { traverseNestedObject } from './utils'
+import { HtmlNodeObject, GeneralObject } from './types'
 
 const OMITTED_TAGS = ['head', 'input', 'textarea', 'script', 'style', 'svg']
 const UNWRAP_TAGS = ['body', 'html', 'div', 'span']
@@ -12,8 +13,12 @@ const PICKED_ATTRS = ['href', 'src', 'id']
  * @param callback invoke every time a parent node is read, return truthy value to stop the reading process
  * @param final callback when reaching the root
  */
-const recursivelyReadParent = (node, callback, final?) => {
-  const _read = (_node) => {
+const recursivelyReadParent = (
+  node: GeneralObject,
+  callback: (node: GeneralObject) => GeneralObject | null,
+  final?: () => GeneralObject,
+) => {
+  const _read = (_node: GeneralObject): GeneralObject => {
     const parent = _node.parentNode
     if (parent) {
       const newNode = callback(parent)
@@ -35,7 +40,7 @@ export interface ParseHTMLConfig {
   resolveSrc?: (src: string) => string
   resolveHref?: (href: string) => string
 }
-const parseHTML = (HTMLString, config: ParseHTMLConfig = {}) => {
+const parseHTML = (HTMLString: string, config: ParseHTMLConfig = {}) => {
   const rootNode = new JSDOM(HTMLString).window.document.documentElement
   const { resolveHref, resolveSrc } = config
 
@@ -90,7 +95,7 @@ const parseHTML = (HTMLString, config: ParseHTMLConfig = {}) => {
           (parent) => {
             const tag = parent.tagName && parent.tagName.toLowerCase()
             if (!tag || UNWRAP_TAGS.indexOf(tag) !== -1) {
-              return false
+              return null
             }
             return makeTextObject()
           },

@@ -1,15 +1,17 @@
 import fs from 'fs'
 import xml2js from 'xml2js'
 import _ from 'lodash'
+// @ts-ignore
 import nodeZip from 'node-zip'
 import parseLink from './parseLink'
 import parseSection, { Section } from './parseSection'
+import { GeneralObject } from './types'
 
 const xmlParser = new xml2js.Parser()
 
-const xmlToJs = (xml) => {
+const xmlToJs = (xml: string) => {
   return new Promise<any>((resolve, reject) => {
-    xmlParser.parseString(xml, (err, object) => {
+    xmlParser.parseString(xml, (err: Error, object: GeneralObject) => {
       if (err) {
         reject(err)
       } else {
@@ -19,7 +21,7 @@ const xmlToJs = (xml) => {
   })
 }
 
-const determineRoot = (opfPath) => {
+const determineRoot = (opfPath: string) => {
   let root = ''
   // set the opsRoot for resolving paths
   if (opfPath.match(/\//)) {
@@ -36,7 +38,7 @@ const determineRoot = (opfPath) => {
   return root
 }
 
-const parseMetadata = (metadata) => {
+const parseMetadata = (metadata: GeneralObject[]) => {
   const title = _.get(metadata[0], ['dc:title', 0]) as string
   let author = _.get(metadata[0], ['dc:creator', 0]) as string
 
@@ -55,22 +57,22 @@ const parseMetadata = (metadata) => {
 
 export class Epub {
   private _zip: any // nodeZip instance
-  private _opfPath: string
-  private _root: string
-  private _content: GeneralObject
-  private _manifest: any[]
-  private _spine: string[] // array of ids defined in manifest
-  private _toc: GeneralObject
-  private _metadata: GeneralObject
-  structure: GeneralObject
-  info: {
+  private _opfPath?: string
+  private _root?: string
+  private _content?: GeneralObject
+  private _manifest?: any[]
+  private _spine?: string[] // array of ids defined in manifest
+  private _toc?: GeneralObject
+  private _metadata?: GeneralObject
+  structure?: GeneralObject
+  info?: {
     title: string
     author: string
     publisher: string
   }
-  sections: Section[]
+  sections?: Section[]
 
-  constructor(buffer) {
+  constructor(buffer: Buffer) {
     this._zip = new nodeZip(buffer, { binary: true, base64: false, checkCRC32: true })
   }
 
@@ -94,7 +96,7 @@ export class Epub {
     }
   }
 
-  async _resolveXMLAsJsObject(path) {
+  async _resolveXMLAsJsObject(path: string) {
     const xml = this.resolve(path).asText()
     return xmlToJs(xml)
   }
@@ -105,11 +107,13 @@ export class Epub {
     return opfPath
   }
 
-  _getManifest(content) {
-    return _.get(content, ['package', 'manifest', 0, 'item'], []).map((item) => item.$) as any[]
+  _getManifest(content: GeneralObject) {
+    return _.get(content, ['package', 'manifest', 0, 'item'], []).map(
+      (item: any) => item.$,
+    ) as any[]
   }
 
-  _resolveIdFromLink(href) {
+  _resolveIdFromLink(href: string) {
     const { name: tarName } = parseLink(href)
     const tarItem = _.find(this._manifest, (item) => {
       const { name } = parseLink(item.href)
@@ -119,15 +123,17 @@ export class Epub {
   }
 
   _getSpine() {
-    return _.get(this._content, ['package', 'spine', 0, 'itemref'], []).map((item) => {
-      return item.$.idref
-    })
+    return _.get(this._content, ['package', 'spine', 0, 'itemref'], []).map(
+      (item: GeneralObject) => {
+        return item.$.idref
+      },
+    )
   }
 
-  _genStructure(tocObj, resolveNodeId = false) {
+  _genStructure(tocObj: GeneralObject, resolveNodeId = false) {
     const rootNavPoints = _.get(tocObj, ['ncx', 'navMap', '0', 'navPoint'], [])
 
-    const parseNavPoint = (navPoint) => {
+    const parseNavPoint = (navPoint: GeneralObject) => {
       // link to section
       const path = _.get(navPoint, ['content', '0', '$', 'src'], '')
       const name = _.get(navPoint, ['navLabel', '0', 'text', '0'])
@@ -152,7 +158,7 @@ export class Epub {
       }
     }
 
-    const parseNavPoints = (navPoints) => {
+    const parseNavPoints = (navPoints: GeneralObject[]) => {
       return navPoints.map((point) => {
         return parseNavPoint(point)
       })
@@ -222,5 +228,5 @@ export default function parserWrapper(target: string | Buffer, options: ParserOp
   if (type === 'path' || (typeof target === 'string' && fs.existsSync(target))) {
     _target = fs.readFileSync(target as string, 'binary')
   }
-  return new Epub(_target).parse(expand)
+  return new Epub(_target as Buffer).parse(expand)
 }
