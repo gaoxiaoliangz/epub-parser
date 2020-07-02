@@ -3,7 +3,7 @@
 > A powerful yet easy-to-use epub parser
 
 [![npm version](https://badge.fury.io/js/%40gxl%2Fepub-parser.svg)](https://badge.fury.io/js/%40gxl%2Fepub-parser)
-[![build state](https://api.travis-ci.org/gaoxiaoliangz/epub-parser.svg?branch=master)](https://travis-ci.org/gaoxiaoliangz/epub-parser)
+![Test](https://github.com/gaoxiaoliangz/epub-parser/workflows/Test/badge.svg)
 
 The package exports a simple parser function which use epub file as input and output JavaScript object.
 
@@ -26,13 +26,11 @@ yarn add @gxl/epub-parser
 ```js
 import { parseEpub } from '@gxl/epub-parser'
 
-console.log('epub content:', parseEpub(binaryData))
-console.log(
-  'epub content:',
-  parseEpub('/path/to/file.epub', {
-    type: 'path',
-  }),
-)
+const epubObj = parseEpub('/path/to/file.epub', {
+  type: 'path',
+})
+
+console.log('epub content:', epubObj)
 ```
 
 ### parseEpub(target: string | buffer, options?: object): EpubObject
