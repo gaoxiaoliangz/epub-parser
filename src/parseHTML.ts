@@ -13,7 +13,7 @@ const PICKED_ATTRS = ['href', 'src', 'id']
  * @param final callback when reaching the root
  */
 const recursivelyReadParent = (node, callback, final?) => {
-  const _read = _node => {
+  const _read = (_node) => {
     const parent = _node.parentNode
     if (parent) {
       const newNode = callback(parent)
@@ -58,7 +58,7 @@ const parseHTML = (HTMLString, config: ParseHTMLConfig = {}) => {
           return children.length === 1 ? children[0] : children
         }
 
-        PICKED_ATTRS.forEach(attr => {
+        PICKED_ATTRS.forEach((attr) => {
           let attrVal = node.getAttribute(attr) || undefined
           if (attrVal && attr === 'href' && resolveHref) {
             attrVal = resolveHref(attrVal)
@@ -87,7 +87,7 @@ const parseHTML = (HTMLString, config: ParseHTMLConfig = {}) => {
         // if failed then wrap with p tag
         return recursivelyReadParent(
           node,
-          parent => {
+          (parent) => {
             const tag = parent.tagName && parent.tagName.toLowerCase()
             if (!tag || UNWRAP_TAGS.indexOf(tag) !== -1) {
               return false

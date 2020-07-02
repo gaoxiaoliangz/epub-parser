@@ -22,9 +22,11 @@ const xmlToJs = (xml) => {
 const determineRoot = (opfPath) => {
   let root = ''
   // set the opsRoot for resolving paths
-  if (opfPath.match(/\//)) { // not at top level
+  if (opfPath.match(/\//)) {
+    // not at top level
     root = opfPath.replace(/\/([^\/]+)\.opf/i, '')
-    if (!root.match(/\/$/)) { // 以 '/' 结尾，下面的 zip 路径写法会简单很多
+    if (!root.match(/\/$/)) {
+      // 以 '/' 结尾，下面的 zip 路径写法会简单很多
       root += '/'
     }
     if (root.match(/^\//)) {
@@ -46,7 +48,7 @@ const parseMetadata = (metadata) => {
   const meta = {
     title,
     author,
-    publisher
+    publisher,
   }
   return meta
 }
@@ -72,7 +74,9 @@ export class Epub {
     this._zip = new nodeZip(buffer, { binary: true, base64: false, checkCRC32: true })
   }
 
-  resolve(path: string): {
+  resolve(
+    path: string,
+  ): {
     asText: () => string
   } {
     let _path
@@ -102,13 +106,12 @@ export class Epub {
   }
 
   _getManifest(content) {
-    return _.get(content, ['package', 'manifest', 0, 'item'], [])
-      .map(item => item.$) as any[]
+    return _.get(content, ['package', 'manifest', 0, 'item'], []).map((item) => item.$) as any[]
   }
 
   _resolveIdFromLink(href) {
     const { name: tarName } = parseLink(href)
-    const tarItem = _.find(this._manifest, item => {
+    const tarItem = _.find(this._manifest, (item) => {
       const { name } = parseLink(item.href)
       return name === tarName
     })
@@ -116,10 +119,9 @@ export class Epub {
   }
 
   _getSpine() {
-    return _.get(this._content, ['package', 'spine', 0, 'itemref'], [])
-      .map(item => {
-        return item.$.idref
-      })
+    return _.get(this._content, ['package', 'spine', 0, 'itemref'], []).map((item) => {
+      return item.$.idref
+    })
   }
 
   _genStructure(tocObj, resolveNodeId = false) {
@@ -146,12 +148,12 @@ export class Epub {
         nodeId,
         path,
         playOrder,
-        children
+        children,
       }
     }
 
     const parseNavPoints = (navPoints) => {
-      return navPoints.map(point => {
+      return navPoints.map((point) => {
         return parseNavPoint(point)
       })
     }
@@ -161,7 +163,7 @@ export class Epub {
 
   _resolveSectionsFromSpine(expand = false) {
     // no chain
-    return _.map(_.union(this._spine), id => {
+    return _.map(_.union(this._spine), (id) => {
       const path = _.find(this._manifest, { id }).href
       const html = this.resolve(path).asText()
 
@@ -170,7 +172,7 @@ export class Epub {
         htmlString: html,
         resourceResolver: this.resolve.bind(this),
         idResolver: this._resolveIdFromLink.bind(this),
-        expand
+        expand,
       })
     })
   }
@@ -207,7 +209,7 @@ export class Epub {
 }
 
 export interface ParserOptions {
-  type?: 'binaryString' | 'path' | 'buffer',
+  type?: 'binaryString' | 'path' | 'buffer'
   expand?: boolean
 }
 export default function parserWrapper(target: string | Buffer, options: ParserOptions = {}) {

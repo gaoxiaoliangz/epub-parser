@@ -35,7 +35,13 @@ export class Section {
 
   toMarkdown?() {
     return toMarkdown(this.htmlString, {
-      converters: [mdConverters.h, mdConverters.span, mdConverters.div, mdConverters.img, mdConverters.a]
+      converters: [
+        mdConverters.h,
+        mdConverters.span,
+        mdConverters.div,
+        mdConverters.img,
+        mdConverters.a,
+      ],
     })
   }
 
@@ -62,7 +68,7 @@ export class Section {
           return `data:image/png;base64,${base64}`
         }
         return src
-      }
+      },
     })
   }
 }

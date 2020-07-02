@@ -5,17 +5,17 @@ import * as path from 'path'
 const baseDir = process.cwd()
 const filesToBeTested = ['file-1', 'file-2', 'file-3', 'file-4', 'file-1-no-toc']
 
-const testFile = filename => {
+const testFile = (filename) => {
   describe(`parser 测试 ${filename}.epub`, () => {
     const fileContent = parser(path.join(baseDir, `fixtures/${filename}.epub`), {
       type: 'path',
-      expand: true
-    }).catch(error => {
+      expand: true,
+    }).catch((error) => {
       console.log(error)
     })
 
-    test('Result should have keys', done => {
-      fileContent.then(result => {
+    test('Result should have keys', (done) => {
+      fileContent.then((result) => {
         const keys = _.keys(result)
         expect(keys.length).not.toBe(0)
         done()
@@ -36,6 +36,6 @@ const testFile = filename => {
   })
 }
 
-filesToBeTested.forEach(filename => {
+filesToBeTested.forEach((filename) => {
   testFile(filename)
 })

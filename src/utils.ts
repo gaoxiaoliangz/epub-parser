@@ -20,7 +20,10 @@ export interface TraverseNestedObject {
  * @param _rootObject
  * @param config
  */
-export const traverseNestedObject = (_rootObject: Object | Object[], config: TraverseNestedObject) => {
+export const traverseNestedObject = (
+  _rootObject: Object | Object[],
+  config: TraverseNestedObject,
+) => {
   const { childrenKey, transformer, preFilter, postFilter, finalTransformer } = config
 
   if (!_rootObject) {
@@ -29,7 +32,11 @@ export const traverseNestedObject = (_rootObject: Object | Object[], config: Tra
 
   const traverse = (rootObject: any | any[]): any[] => {
     const makeArray = () => {
-      if (Array.isArray(rootObject) || _.isArrayLikeObject(rootObject) || _.isArrayLike(rootObject)) {
+      if (
+        Array.isArray(rootObject) ||
+        _.isArrayLikeObject(rootObject) ||
+        _.isArrayLike(rootObject)
+      ) {
         return rootObject
       }
       return [rootObject]
@@ -47,7 +54,9 @@ export const traverseNestedObject = (_rootObject: Object | Object[], config: Tra
         const transformedChildren = traverse(object[childrenKey])
         // in parseHTML, if a tag is in unwrap list, like <span>aaa<span>bbb</span></span>
         // the result needs to be flatten
-        const children = _.isEmpty(transformedChildren) ? undefined : _.flattenDeep(transformedChildren)
+        const children = _.isEmpty(transformedChildren)
+          ? undefined
+          : _.flattenDeep(transformedChildren)
         if (transformer) {
           return transformer(object, children)
         }
