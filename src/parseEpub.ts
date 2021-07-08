@@ -241,7 +241,7 @@ export class Epub {
     // https://github.com/gaoxiaoliangz/epub-parser/issues/13
     // https://www.w3.org/publishing/epub32/epub-packages.html#sec-spine-elem
 
-    const tocPath = _.find(manifest, { id: tocID })?.href
+    const tocPath = (_.find(manifest, { id: tocID }) || {}).href
     if (tocPath) {
       const toc = await this._resolveXMLAsJsObject(tocPath)
       this._toc = toc
