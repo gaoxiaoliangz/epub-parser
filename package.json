@@ -12,7 +12,8 @@
     "test": "jest",
     "test-debug": "node --inspect-brk -r ts-node/register node_modules/.bin/jest --runInBand",
     "v": "standard-version --preset angular",
-    "postv": "git push --follow-tags origin master"
+    "postv": "git push --follow-tags origin master",
+    "prepare": "yarn build"
   },
   "repository": {
     "type": "git",
