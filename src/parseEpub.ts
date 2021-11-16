@@ -222,6 +222,7 @@ export class Epub {
 
       return parseSection({
         id,
+        filename: path,
         htmlString: html,
         resourceResolver: this.resolve.bind(this),
         idResolver: this._resolveIdFromLink.bind(this),

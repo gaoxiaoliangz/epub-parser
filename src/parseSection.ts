@@ -12,6 +12,7 @@ const isInternalUri = (uri: string) => {
 
 export type ParseSectionConfig = {
   id: string
+  filename: string
   htmlString: string
   resourceResolver: (path: string) => any
   idResolver: (link: string) => string
@@ -20,13 +21,15 @@ export type ParseSectionConfig = {
 
 export class Section {
   id: string
+  filename: string
   htmlString: string
   htmlObjects?: HtmlNodeObject[]
   private _resourceResolver?: (path: string) => any
   private _idResolver?: (link: string) => string
 
-  constructor({ id, htmlString, resourceResolver, idResolver, expand }: ParseSectionConfig) {
+  constructor({ id, filename, htmlString, resourceResolver, idResolver, expand }: ParseSectionConfig) {
     this.id = id
+    this.filename = filename
     this.htmlString = htmlString
     this._resourceResolver = resourceResolver
     this._idResolver = idResolver
