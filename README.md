@@ -26,7 +26,7 @@ yarn add @gxl/epub-parser
 ```js
 import { parseEpub } from '@gxl/epub-parser'
 
-const epubObj = parseEpub('/path/to/file.epub', {
+const epubObj = await parseEpub('/path/to/file.epub', {
   type: 'path',
 })
 
