@@ -64,7 +64,7 @@ export class Section {
       resolveSrc: (src) => {
         if (isInternalUri(src)) {
           // todo: may have bugs
-          const absolutePath = path.resolve('/', src).substr(1)
+          const absolutePath = path.posix.resolve('/', src).substr(1)
           const buffer = this._resourceResolver?.(absolutePath)?.asNodeBuffer()
           const base64 = buffer.toString('base64')
           return `data:image/png;base64,${base64}`
